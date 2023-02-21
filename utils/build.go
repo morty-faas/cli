@@ -15,12 +15,15 @@ import (
 	"github.com/pierrec/lz4"
 )
 
-func runCommand(command string) error {
+func runCommand(command string) {
 	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func fetchTemplate(runtime string) {
@@ -59,7 +62,12 @@ func buildImage(name string, buildArgs []string) {
 }
 
 func createExt4(name string) error {
-	runCommand(fmt.Sprintf("dd if=/dev/zero of=./%s.ext4 bs=1M count=500 > /dev/null", name))
+	file, err := os.Stat(name + ".tar")
+	if err != nil {
+		return err
+	}
+	size := int64(float64(file.Size()) / 1000 / 1000 * 1.25) // 25% size increase for ext4
+	runCommand(fmt.Sprintf("dd if=/dev/zero of=./%s.ext4 bs=1M count=%d > /dev/null", name, size))
 	runCommand(fmt.Sprintf("mkfs.ext4 ./%s.ext4", name))
 	os.Mkdir("rootfsdir", 0755)
 	runCommand(fmt.Sprintf("sudo mount ./%s.ext4 rootfsdir", name))
