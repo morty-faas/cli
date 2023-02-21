@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"morty/storage"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -123,10 +124,17 @@ func Build(name string, runtime string, folder string, buildArgs []string) {
 	buildImage(name, buildArgs)
 	createExt4(name)
 
-	//TODO: upload rootfs
 	rootfsPath := filepath.Join(rootPath, name+".ext4")
 	runCommand(fmt.Sprintf("cp %s.ext4 %s", name, rootfsPath))
 	compressLZ4(rootfsPath)
+
+	//upload image to minio
+	objectName := fmt.Sprintf("%s.ext4.lz4", name)
+	filePath := fmt.Sprintf("%s/%s", rootPath, objectName)
+
+	minioClient := storage.New()
+	minioClient.StoreImage(objectName, filePath)
+
 	err = os.RemoveAll(buildPath)
 	if err != nil {
 		log.Fatal(err)

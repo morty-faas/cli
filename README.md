@@ -22,11 +22,13 @@ morty new --runtime node-19 myFirstFuntion
 ## Package the function
 
 ```bash
+export MINIO_ENDPOINT="<MINIO_HOST>" MINIO_USER="<MINIO_USER>" MINIO_PASSWORD="<MINIO_PASSWORD>"
 morty build --name <name> --runtime <runtime> PATH
 ```
 
 Example:
 
 ```bash
+export MINIO_ENDPOINT="localhost:9000" MINIO_USER="minioadmin" MINIO_PASSWORD="minioadmin"
 morty build --name test --runtime node-19 --build-arg ADDITIONAL_PACKAGE="iputils curl" --build-arg TARGETPLATFORM="linux/amd64" ./function
 ```
