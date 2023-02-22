@@ -13,15 +13,7 @@ type Node19Function struct {
 }
 
 func (f *Node19Function) init() {
-    for _, file := range []string{"handler.js", "package.json"} {
-        response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.function.runtime + "/function/" + file)
-        if err != nil {
-            log.Fatal("cannot fetch necessary content: ", err)
-        }
-        defer response.Body.Close()
-        template, err := io.ReadAll(response.Body)
-        writeFile(f.function.getWorkingDir() + "/"+file, string(template))
-    }
+    fetchTemplateFiles(f.function, []string{"handler.js", "package.json"})
 }
 
 func newNode19() iFunction {
@@ -38,15 +30,7 @@ type PythonFunction struct {
 }
 
 func (f *PythonFunction) init() {
-    for _, file := range []string{"handler.py", "requirements.txt"} {
-        response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.function.runtime + "/function/" + file)
-        if err != nil {
-            log.Fatal("cannot fetch necessary content: ", err)
-        }
-        defer response.Body.Close()
-        template, err := io.ReadAll(response.Body)
-        writeFile(f.function.getWorkingDir() + "/"+file, string(template))
-    }
+    fetchTemplateFiles(f.function, []string{"handler.py", "requirements.txt"})
 }
 
 func newPython() iFunction {
@@ -97,4 +81,24 @@ func writeFile (filename string, content string) {
 	if err != nil {
 		log.Fatal("ERROR: Cannot create file(s): ", err)
 	}
+}
+
+func fetchTemplateFiles(f function,files []string) {
+    revert := false
+    for _, file := range files {
+        response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.runtime + "/function/" + file)
+        if err != nil || response.StatusCode != 200 {
+            revert = true
+        }
+        defer response.Body.Close()
+        template, err := io.ReadAll(response.Body)
+        writeFile(f.getWorkingDir() + "/"+file, string(template))
+    }
+
+    if revert {
+        os.RemoveAll(f.getWorkingDir())
+        log.Fatal("ERROR: Cannot fetch template files. Please check your internet connection.\n\nReverting changes...")
+    }
+
+
 }
