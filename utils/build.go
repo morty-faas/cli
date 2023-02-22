@@ -36,8 +36,14 @@ func fetchTemplate(runtime string) {
 }
 
 func copyUserFunction(src string, dest string) error {
-	os.RemoveAll(filepath.Join(dest, "function"))
-	os.MkdirAll(filepath.Join(dest, "function"), 0755)
+	err := os.RemoveAll(filepath.Join(dest, "function"))
+	if err != nil {
+		return fmt.Errorf("ERROR: Cannot remove file(s). %s", err)
+	}
+	err = os.MkdirAll(filepath.Join(dest, "function"), 0755)
+	if err != nil {
+		return fmt.Errorf("ERROR: Cannot create folder(s)/file(s) %s", err)
+	}
 	return cp.Copy(src, filepath.Join(dest, "function"))
 }
 
@@ -69,7 +75,10 @@ func createExt4(name string) error {
 	size := int64(float64(file.Size()) / 1000 / 1000 * 1.25) // 25% size increase for ext4
 	runCommand(fmt.Sprintf("dd if=/dev/zero of=./%s.ext4 bs=1M count=%d > /dev/null", name, size))
 	runCommand(fmt.Sprintf("mkfs.ext4 ./%s.ext4", name))
-	os.Mkdir("rootfsdir", 0755)
+	err = os.Mkdir("rootfsdir", 0755)
+	if err != nil {
+		log.Fatal("ERROR: cannot create rootfs dir", err)
+	}
 	runCommand(fmt.Sprintf("sudo mount ./%s.ext4 rootfsdir", name))
 	runCommand(fmt.Sprintf("sudo tar -C rootfsdir -xf ./%s.tar", name))
 	runCommand("sudo umount rootfsdir")

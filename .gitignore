@@ -19,3 +19,5 @@
 
 /target
 /workspaces/**
+**.ext4
+**.ext4.lz4
