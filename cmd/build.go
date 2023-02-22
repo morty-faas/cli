@@ -1,7 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
@@ -13,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func stringInSlice(str string, list []string) bool {
+func StringInSlice(str string, list []string) bool {
 	for _, s := range list {
 		if s == str {
 			return true
@@ -32,7 +28,7 @@ var buildCmd = &cobra.Command{
 		name := cmd.Flags().Lookup("name").Value.String()
 		runtime := cmd.Flags().Lookup("runtime").Value.String()
 		availableRuntime := []string{"python", "node-19"}
-		if !stringInSlice(runtime, availableRuntime) {
+		if !StringInSlice(runtime, availableRuntime) {
 			log.Fatal("ERROR: Bad runtime provided, please use one of:", strings.Join(availableRuntime, ", "))
 		}
 		folder := args[0]
