@@ -1,5 +1,7 @@
 # CLI morty
 
+Morty cli is a tool to help you to create, build and deploy your function.
+
 # Usage
 
 ## Create a new function

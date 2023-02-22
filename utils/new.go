@@ -3,67 +3,32 @@ package utils
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"log"
     "net/http"
     "io"
 )
-
-const RUNTIME_TEMPLATES_ENDPOINTS = "https://raw.githubusercontent.com/polyxia-org/runtimes/main/template/"
-
-type iFunction interface {
-	setName(name string)
-	getName() string
-	getWorkingDir() string
-	init()
-}
-
-type function struct {
-    name  string
-    runtime string
-}
-
-func (f *function) setName(name string) {
-    f.name = name
-}
-
-func (f *function) getName() string {
-    return f.name
-}
-
-func (f *function) getWorkingDir() string {
-    return  filepath.Join("./workspaces", f.name)
-}
-
 
 type Node19Function struct {
    function
 }
 
 func (f *Node19Function) init() {
-    responseHandler, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.function.runtime + "/function/handler.js")
-    if err != nil {
-        log.Fatal("cannot fetch necessary content: ", err)
+    for _, file := range []string{"handler.js", "package.json"} {
+        response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.function.runtime + "/function/" + file)
+        if err != nil {
+            log.Fatal("cannot fetch necessary content: ", err)
+        }
+        defer response.Body.Close()
+        template, err := io.ReadAll(response.Body)
+        writeFile(f.function.getWorkingDir() + "/"+file, string(template))
     }
-    defer responseHandler.Body.Close()
-    functionTemplateHandler, err := io.ReadAll(responseHandler.Body)
-	writeFile(f.function.getWorkingDir() + "/handler.js", string(functionTemplateHandler))
-    
-    responsePackageJson, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.function.runtime + "/function/package.json")
-    if err != nil {
-        log.Fatal("cannot fetch necessary content: ", err)
-    }
-    defer responsePackageJson.Body.Close()
-    functionTemplatePackageJson, err := io.ReadAll(responsePackageJson.Body)
-    writeFile(f.function.getWorkingDir() + "/package.json", string(functionTemplatePackageJson))
-
 }
 
 func newNode19() iFunction {
     return &Node19Function{
         function: function{
-            name:  "default",
-            runtime: "node-19",
+            name:  "default-node-function",
+            runtime: string(Node19),
         },
     }
 }
@@ -73,46 +38,63 @@ type PythonFunction struct {
 }
 
 func (f *PythonFunction) init() {
-	fmt.Println("Python function not implemented yet (", f.function.getWorkingDir(), "/main.py", ")")
+    for _, file := range []string{"handler.py", "requirements.txt"} {
+        response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.function.runtime + "/function/" + file)
+        if err != nil {
+            log.Fatal("cannot fetch necessary content: ", err)
+        }
+        defer response.Body.Close()
+        template, err := io.ReadAll(response.Body)
+        writeFile(f.function.getWorkingDir() + "/"+file, string(template))
+    }
 }
 
 func newPython() iFunction {
     return &PythonFunction{
         function: function{
-            name:  "default",
-            runtime: "node-19",
+            name:  "default-python-function",
+            runtime: string(Python3),
         },
     }
 }
 
 func getFunction(runtime string) (iFunction, error) {
-    if runtime == "node-19" {
+    Runtime(runtime).CheckValidityOrExit()
+
+    if runtime == string(Node19) {
         return newNode19(), nil
     }
-    if runtime == "python" {
+    if runtime == string(Python3)  {
         return newPython(), nil
     }
-    return nil, fmt.Errorf("Wrong gun type passed")
+    return nil, fmt.Errorf("ERROR: This runtime isn't supported yet.")
 }
 
 func New(name string, runtime string) {
 	function, err := getFunction(runtime)
 	if err != nil {
-			log.Fatal("factory error: ", err)
+			log.Fatal("ERROR: internal factory error.", err)
 		return
 	}
 
 	function.setName(name)
 	workingDir := function.getWorkingDir()
-	os.MkdirAll(workingDir, 0755)
-	function.init()
+    if _, err := os.Stat(workingDir); !os.IsNotExist(err) {
+        log.Fatal("ERROR: Function already exists. Please consider using a different name.")
+    }
+	err = os.MkdirAll(workingDir, 0755)
+	if err != nil {
+        log.Fatal("ERROR: Cannot create function directory: ", err)
+    }
+    function.init()
 
-	fmt.Println("Function ",function.getName()," initialised! (\"", workingDir, "\")")
+	fmt.Println("Function ",function.getName()," initialised!")
+    fmt.Println("You can now start developing your function by editing the files in the working directory. (",workingDir,")")
 }
 
 func writeFile (filename string, content string) {
 	err := os.WriteFile(filename, []byte(content), 0644)
 	if err != nil {
-		log.Fatal("cannot create files: ", err)
+		log.Fatal("ERROR: Cannot create file(s): ", err)
 	}
 }

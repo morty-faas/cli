@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"log"
 	"morty/utils"
-	"strings"
 	"fmt"
 	"github.com/spf13/cobra"
 )
@@ -24,10 +22,7 @@ var newCmd = &cobra.Command{
 		},
 	Run: func(cmd *cobra.Command, args []string) {
 		runtime := cmd.Flags().Lookup("runtime").Value.String()
-		availableRuntime := []string{"python", "node-19"}
-		if !StringInSlice(runtime, availableRuntime) {
-			log.Fatal("ERROR: Bad runtime provided, please use one of:", strings.Join(availableRuntime, ", "))
-		}
+		utils.Runtime(runtime).CheckValidityOrExit()
 
 		name := args[0]
 
@@ -37,6 +32,6 @@ var newCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(newCmd)
-	newCmd.Flags().StringP("runtime", "r", "", "Runtime of the function e.g. \"python\", \"node\"")
+	newCmd.Flags().StringP("runtime", "r", "", "Runtime of the function e.g. \"python-3\", \"node-19\"")
 	newCmd.MarkFlagRequired("runtime")
 }
