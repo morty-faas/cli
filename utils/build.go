@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -48,6 +49,25 @@ func copyUserFunction(src string, dest string) error {
 	return cp.Copy(src, filepath.Join(dest, "function"))
 }
 
+func getImageSize(name string) (int, error) {
+	cmd := exec.Command("docker", "inspect", name, "--format", "{{.Size}}")
+	output, err := cmd.Output()
+	if err != nil {
+		return 0, err
+	}
+
+	sizeString := strings.TrimSpace(string(output))
+	size, err := strconv.Atoi(sizeString)
+
+	if err != nil {
+		return 0, err
+	}
+
+	size = int(float64(size) / 1000 / 1000 * 1.25) // 25% size increase for ext4
+
+	return size, nil
+}
+
 func buildImage(name string, buildArgs []string) {
 	parsedBuildArgs := ""
 	//loop through build args and add them to the docker build command
@@ -65,23 +85,38 @@ func buildImage(name string, buildArgs []string) {
 	}
 
 	runCommand(fmt.Sprintf("docker build %s -t %s . > /dev/null", parsedBuildArgs, name))
-	runCommand(fmt.Sprintf("docker export $(docker create %s) -o %s.tar", name, name))
 }
 
 func createExt4(name string) error {
-	file, err := os.Stat(name + ".tar")
+
+	size, err := getImageSize(name)
 	if err != nil {
 		return err
 	}
-	size := int64(float64(file.Size()) / 1000 / 1000 * 1.25) // 25% size increase for ext4
+
+	// Create the ext4 mount point
 	runCommand(fmt.Sprintf("dd if=/dev/zero of=./%s.ext4 bs=1M count=%d > /dev/null", name, size))
 	runCommand(fmt.Sprintf("mkfs.ext4 ./%s.ext4", name))
-	err = os.Mkdir("rootfsdir", 0755)
-	if err != nil {
+
+	if err = os.Mkdir("rootfsdir", 0755); err != nil {
 		log.Fatal("ERROR: cannot create rootfs dir", err)
 	}
+
 	runCommand(fmt.Sprintf("sudo mount ./%s.ext4 rootfsdir", name))
-	runCommand(fmt.Sprintf("sudo tar -C rootfsdir -xf ./%s.tar", name))
+
+	// Create a script to export the rootfs from within the Docker container
+	runCommand("cat <<EOF > ./rootfs-export.sh\nfor d in app bin etc lib root sbin usr; do tar c \"/\\${d}\" | tar x -C /my-rootfs; done\nfor dir in dev proc run sys var; do mkdir /my-rootfs/\\${dir}; done\nexit\nEOF")
+
+	// export the rootfs from the Docker container
+	runCommand(fmt.Sprintf("sudo docker run --rm -i -v ./rootfsdir:/my-rootfs -v /dev/urandom:/dev/random %s:latest sh <./rootfs-export.sh", name))
+
+	// Inject the custom /sbin/init script
+	runCommand("cat <<EOF > $(pwd)/alpha_init\n#!/bin/sh\nsource /app/env.sh\n/usr/bin/alpha\nEOF")
+
+	runCommand("sudo mv rootfsdir/sbin/init rootfsdir/sbin/init.old")
+	runCommand("sudo cp $(pwd)/alpha_init rootfsdir/sbin/init")
+	runCommand("sudo chmod a+x rootfsdir/sbin/init")
+
 	runCommand("sudo umount rootfsdir")
 	return nil
 }
@@ -139,6 +174,6 @@ func Build(name string, runtime string, folder string, buildArgs []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Build complete! (\"", rootfsPath, "\")")
+	fmt.Println("Build successful! (\"", rootfsPath, "\")")
 
 }
