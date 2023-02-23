@@ -4,6 +4,7 @@ import (
 	"morty/utils"
 	"fmt"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 // newCmd represents the build command
@@ -15,7 +16,7 @@ var newCmd = &cobra.Command{
     if err := cobra.MinimumNArgs(1)(cmd, args); err != nil {
 			return fmt.Errorf("you must specify a function name")
     }
-    if args[0] != "" {
+    if args[0] != "" && !strings.Contains(args[0], " ") {
       return nil
     }
     return fmt.Errorf("invalid function name specified")
