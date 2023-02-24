@@ -8,12 +8,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 // buildCmd represents the build command
 var buildCmd = &cobra.Command{
 	Use:   "build <PATH>",
-	Short: "Build a rootfs to be run in morty FaaS",
-	Long:  `This command allow you to package a function into a rootfs that can be run in morty FaaS.`,
+	Short: "Build a rootfs to be run in Morty FaaS",
+	Long:  `This command allows you to package a function into a rootfs that can be run in Morty FaaS.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		name := cmd.Flags().Lookup("name").Value.String()

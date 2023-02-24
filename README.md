@@ -1,6 +1,6 @@
 # CLI morty
 
-Morty cli is a tool to help you to create, build and deploy your function.
+Morty CLI is a tool that helps you to create, build and deploy your function.
 
 # Usage
 
@@ -10,7 +10,8 @@ Morty cli is a tool to help you to create, build and deploy your function.
 morty new --runtime <runtime> FUNCTION_NAME
 ```
 
-_This command create a new workspace and default configuration for you're function._
+_This command creates a new workspace and default configuration for your function._
+
 The function workspace repository should be available at [./workspace](./workspace)
 
 Example:
@@ -22,7 +23,7 @@ morty new --runtime node-19 myFirstFuntion
 ## Package the function
 
 ```bash
-export MORTY_REGISTRY_URL=<registry_url>"
+export MORTY_REGISTRY_URL=<registry_url>
 morty build --name <name> --runtime <runtime> PATH
 ```
 
