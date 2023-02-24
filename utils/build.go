@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"morty/storage"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
-
 	"github.com/google/uuid"
 	cp "github.com/otiai10/copy"
 	"github.com/pierrec/lz4"
@@ -167,8 +165,11 @@ func Build(name string, runtime string, folder string, buildArgs []string) {
 	objectName := fmt.Sprintf("%s.ext4.lz4", name)
 	filePath := fmt.Sprintf("%s/%s", rootPath, objectName)
 
-	minioClient := storage.New()
-	minioClient.StoreImage(objectName, filePath)
+	registry := NewRegistry()
+	registry.UploadFile(objectName, filePath)
+
+	// minioClient := storage.New()
+	// minioClient.StoreImage(objectName, filePath)
 
 	err = os.RemoveAll(buildPath)
 	if err != nil {
