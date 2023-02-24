@@ -42,16 +42,36 @@ func newPython() iFunction {
     }
 }
 
+type GoFunction struct {
+    function
+}
+
+func (f *GoFunction) init() {
+    fetchTemplateFiles(f.function, []string{"handler.go", "go.mod"})
+}
+
+func newGo() iFunction {
+    return &GoFunction{
+        function: function{
+            name:  "default-go-function",
+            runtime: string(Go119),
+        },
+    }
+}
+
 func getFunction(runtime string) (iFunction, error) {
     Runtime(runtime).CheckValidityOrExit()
 
-    if runtime == string(Node19) {
+    switch runtime {
+    case string(Node19):
         return newNode19(), nil
-    }
-    if runtime == string(Python3)  {
+    case string(Python3):
         return newPython(), nil
+    case string(Go119):
+        return newGo(), nil
+    default:
+        return nil, fmt.Errorf("ERROR: This runtime isn't supported yet.")
     }
-    return nil, fmt.Errorf("ERROR: This runtime isn't supported yet.")
 }
 
 func New(name string, runtime string) {
