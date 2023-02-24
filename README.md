@@ -22,13 +22,15 @@ morty new --runtime node-19 myFirstFuntion
 ## Package the function
 
 ```bash
-export MINIO_ENDPOINT="<MINIO_HOST>" MINIO_USER="<MINIO_USER>" MINIO_PASSWORD="<MINIO_PASSWORD>"
+export MORTY_REGISTRY_URL=<registry_url>"
 morty build --name <name> --runtime <runtime> PATH
 ```
 
 Example:
 
 ```bash
-export MINIO_ENDPOINT="localhost:9000" MINIO_USER="minioadmin" MINIO_PASSWORD="minioadmin"
+export MORTY_REGISTRY_URL="http://localhost:8080"
 morty build --name test --runtime node-19 --build-arg ADDITIONAL_PACKAGE="iputils curl" --build-arg TARGETPLATFORM="linux/amd64" ./function
 ```
+
+**Care about the `http(s)://` prefix in the registry URL**
