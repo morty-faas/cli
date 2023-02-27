@@ -3,16 +3,17 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"github.com/google/uuid"
+	cp "github.com/otiai10/copy"
+	"github.com/pierrec/lz4"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"github.com/google/uuid"
-	cp "github.com/otiai10/copy"
-	"github.com/pierrec/lz4"
 )
 
 func runCommand(command string) {
@@ -139,6 +140,17 @@ func compressLZ4(filename string) error {
 }
 
 func Build(name string, runtime string, folder string, buildArgs []string) {
+
+	// Check if user is root
+	currentUser, e := user.Current()
+	if e != nil {
+		log.Fatalf("Unable to get current user: %s", e)
+	}
+
+	if currentUser.Uid != "0" {
+		log.Fatal("You must be root to build a function")
+	}
+
 	rootPath, _ := os.Getwd()
 	buildPath := "/tmp/morty/builds/" + uuid.New().String()
 	if err := os.MkdirAll(buildPath, os.ModePerm); err != nil {

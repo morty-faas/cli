@@ -22,16 +22,22 @@ morty new --runtime node-19 myFirstFuntion
 
 ## Package the function
 
+_This command will package your function and create a lz4 file._
+
+If MORTY_REGISTRY_URL is set, the function will be uploaded to the registry.
+
 ```bash
 export MORTY_REGISTRY_URL=<registry_url>
-morty build --name <name> --runtime <runtime> PATH
+sudo morty build --name <name> --runtime <runtime> PATH
 ```
 
 Example:
 
 ```bash
 export MORTY_REGISTRY_URL="http://localhost:8080"
-morty build --name test --runtime node-19 --build-arg ADDITIONAL_PACKAGE="iputils curl" --build-arg TARGETPLATFORM="linux/amd64" ./function
+sudo morty build --name test --runtime node-19 --build-arg ADDITIONAL_PACKAGE="iputils curl" --build-arg TARGETPLATFORM="linux/amd64" ./function
 ```
 
 **Care about the `http(s)://` prefix in the registry URL**
+
+**This command should be run with root privileges**
