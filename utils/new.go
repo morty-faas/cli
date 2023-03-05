@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -13,16 +14,17 @@ type Node19Function struct {
 }
 
 func (f *Node19Function) init() {
-	fetchTemplateFiles(f.function, []string{"handler.js", "package.json"})
+    fetchTemplateFiles(f.function, []string{"handler.js", "package.json"})
+    create_config_file(f.function)
 }
 
 func newNode19() iFunction {
-	return &Node19Function{
-		function: function{
-			name:    "default-node-function",
-			runtime: string(Node19),
-		},
-	}
+    return &Node19Function{
+        function: function{
+            Name:  "default-node-function",
+            Runtime: string(Node19),
+        },
+    }
 }
 
 type PythonFunction struct {
@@ -30,16 +32,17 @@ type PythonFunction struct {
 }
 
 func (f *PythonFunction) init() {
-	fetchTemplateFiles(f.function, []string{"handler.py", "requirements.txt"})
+    fetchTemplateFiles(f.function, []string{"handler.py", "requirements.txt"})
+    create_config_file(f.function)
 }
 
 func newPython() iFunction {
-	return &PythonFunction{
-		function: function{
-			name:    "default-python-function",
-			runtime: string(Python3),
-		},
-	}
+    return &PythonFunction{
+        function: function{
+            Name:  "default-python-function",
+            Runtime: string(Python3),
+        },
+    }
 }
 
 type GoFunction struct {
@@ -51,12 +54,12 @@ func (f *GoFunction) init() {
 }
 
 func newGo() iFunction {
-	return &GoFunction{
-		function: function{
-			name:    "default-go-function",
-			runtime: string(Go119),
-		},
-	}
+    return &GoFunction{
+        function: function{
+            Name:  "default-go-function",
+            Runtime: string(Go119),
+        },
+    }
 }
 
 func getFunction(runtime string) (iFunction, error) {
@@ -103,21 +106,32 @@ func writeFile(filename string, content string) {
 	}
 }
 
-func fetchTemplateFiles(f function, files []string) {
-	revert := false
-	for _, file := range files {
-		response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.runtime + "/function/" + file)
-		if err != nil || response.StatusCode != 200 {
-			revert = true
-		}
-		defer response.Body.Close()
-		template, err := io.ReadAll(response.Body)
-		writeFile(f.getWorkingDir()+"/"+file, string(template))
-	}
+func fetchTemplateFiles(f function,files []string) {
+    revert := false
+    for _, file := range files {
+        response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.Runtime + "/function/" + file)
+        if err != nil || response.StatusCode != 200 {
+            revert = true
+        }
+        defer response.Body.Close()
+        template, err := io.ReadAll(response.Body)
+        writeFile(f.getWorkingDir() + "/"+file, string(template))
+    }
 
-	if revert {
-		os.RemoveAll(f.getWorkingDir())
-		log.Fatal("ERROR: Cannot fetch template files. Please check your internet connection.\n\nReverting changes...")
-	}
+    if revert {
+        os.RemoveAll(f.getWorkingDir())
+        log.Fatal("ERROR: Cannot fetch template files. Please check your internet connection.\n\nReverting changes...")
+    }
+}
 
+func create_config_file(f function) {
+    config, err := json.Marshal(f)
+	if err != nil {
+		log.Fatal("ERROR: An error occurred while creating the content of the config file: ", err)
+	}
+    err = os.MkdirAll(f.getWorkingDir() + "/.morty", 0755)
+	if err != nil {
+		log.Fatal("ERROR: Cannot create config file: ", err)
+	}
+    writeFile(f.getWorkingDir() + "/.morty/config.json", string(config))
 }

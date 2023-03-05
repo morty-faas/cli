@@ -1,4 +1,5 @@
 package utils
+
 import (
 	"log"
 )
@@ -11,6 +12,10 @@ const (
 	Python3 Runtime = "python-3"
 	Go119	 Runtime = "go-1.19"
 )
+
+func GetAvailableRuntimesAsString() string {
+	return string(Node19) + ", " + string(Python3) + ", " + string(Go119)
+}
 
 func (runtime Runtime) CheckValidityOrExit() {
     switch runtime {

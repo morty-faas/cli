@@ -2,10 +2,8 @@ package utils
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	cp "github.com/otiai10/copy"
-	"github.com/pierrec/lz4"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,6 +12,10 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/google/uuid"
+	cp "github.com/otiai10/copy"
+	"github.com/pierrec/lz4"
 )
 
 func runCommand(command string) {
@@ -189,4 +191,27 @@ func Build(name string, runtime string, folder string, buildArgs []string) {
 	}
 	fmt.Println("Build successful! (\"", rootfsPath, "\")")
 
+}
+
+func BuildIntuitive(name string, buildArgs []string) {
+	f := &function{Name: name}
+	folder := f.getWorkingDir()
+	runtime := GetFunctionValueFromConfig(folder, "runtime")
+	log.Println("Building intuitive function: ", name, " with runtime: ", runtime, "in folder: ", folder)
+	Build(name, runtime, folder, buildArgs)
+}
+
+func GetFunctionValueFromConfig(folder string, parameter string) string {
+	file, err := os.Open(filepath.Join(folder, ".morty/config.json"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	byteValue, _ := ioutil.ReadAll(file)
+
+	var result map[string]interface{}
+	json.Unmarshal([]byte(byteValue), &result)
+
+	return result[parameter].(string)
 }

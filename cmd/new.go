@@ -34,6 +34,6 @@ var newCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(newCmd)
-	newCmd.Flags().StringP("runtime", "r", "", "Runtime of the function e.g. \"python-3\", \"node-19\"")
+	newCmd.Flags().StringP("runtime", "r", "", fmt.Sprintf("Runtime of the function : %s", utils.GetAvailableRuntimesAsString()))
 	newCmd.MarkFlagRequired("runtime")
 }

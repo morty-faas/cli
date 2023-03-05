@@ -12,18 +12,20 @@ type iFunction interface {
 }
 
 type function struct {
-    name  string
-    runtime string
+    Name  string `json:"name"`
+    Runtime string	`json:"runtime"`
 }
 
 func (f *function) setName(name string) {
-    f.name = name
+    f.Name = name
 }
 
 func (f *function) getName() string {
-    return f.name
+    return f.Name
 }
 
 func (f *function) getWorkingDir() string {
-    return  filepath.Join("./workspaces", f.name)
+	// Please, use this function to get the path to the function's working directory.
+	// This function will be change in the future in order to get the current working directory.
+    return  filepath.Join("./workspaces", f.Name)
 }
