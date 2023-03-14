@@ -9,57 +9,28 @@ import (
 	"os"
 )
 
-type Node19Function struct {
-	function
-}
-
-func (f *Node19Function) init() {
-    fetchTemplateFiles(f.function, []string{"handler.js", "package.json"})
-    create_config_file(f.function)
-}
-
 func newNode19() iFunction {
-    return &Node19Function{
-        function: function{
-            Name:  "default-node-function",
-            Runtime: string(Node19),
-        },
-    }
-}
-
-type PythonFunction struct {
-	function
-}
-
-func (f *PythonFunction) init() {
-    fetchTemplateFiles(f.function, []string{"handler.py", "requirements.txt"})
-    create_config_file(f.function)
+	return &function{
+		Name:  "default-node-function",
+		Runtime: string(Node19),
+		requiredFiles: []string{"handler.js", "package.json"},
+	}
 }
 
 func newPython() iFunction {
-    return &PythonFunction{
-        function: function{
-            Name:  "default-python-function",
-            Runtime: string(Python3),
-        },
-    }
-}
-
-type GoFunction struct {
-	function
-}
-
-func (f *GoFunction) init() {
-	fetchTemplateFiles(f.function, []string{"handler.go", "go.mod"})
+	return &function{
+		Name:  "default-python-function",
+		Runtime: string(Python3),
+		requiredFiles: []string{"handler.py", "requirements.txt"},
+	}
 }
 
 func newGo() iFunction {
-    return &GoFunction{
-        function: function{
-            Name:  "default-go-function",
-            Runtime: string(Go119),
-        },
-    }
+	return &function{
+		Name:  "default-go-function",
+		Runtime: string(Go119),
+		requiredFiles: []string{"handler.go", "go.mod"},
+	}
 }
 
 func getFunction(runtime string) (iFunction, error) {
@@ -106,15 +77,18 @@ func writeFile(filename string, content string) {
 	}
 }
 
-func fetchTemplateFiles(f function,files []string) {
+func fetchTemplateFiles(f function) {
     revert := false
-    for _, file := range files {
+    for _, file := range f.requiredFiles {
         response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.Runtime + "/function/" + file)
         if err != nil || response.StatusCode != 200 {
             revert = true
         }
         defer response.Body.Close()
         template, err := io.ReadAll(response.Body)
+				if err != nil {
+					log.Fatal("ERROR: An error occurred while reading the template file: ", err)
+				}
         writeFile(f.getWorkingDir() + "/"+file, string(template))
     }
 
