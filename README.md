@@ -12,8 +12,6 @@ morty new --runtime <runtime> FUNCTION_NAME
 
 _This command creates a new workspace and default configuration for your function._
 
-The function workspace repository should be available at [./workspace](./workspace)
-
 Example:
 
 ```bash

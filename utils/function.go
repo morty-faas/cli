@@ -37,7 +37,8 @@ func (f *function) getWorkingDir() string {
 			return  filepath.Join("./", f.Name)
 	}
 
-	return  filepath.Join("./workspaces", f.Name)}
+	return  filepath.Join("./", f.Name)
+}
 
 func (f *function) init() {
 	fetchTemplateFiles(*f)
