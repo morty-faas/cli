@@ -33,6 +33,14 @@ func newGo() iFunction {
 	}
 }
 
+func newRust() iFunction {
+	return &function{
+		Name:  "default-rust-function",
+		Runtime: string(Rust167),
+		requiredFiles: []string{"handler.rs", "Cargo.toml"},
+	}
+}
+
 func getFunction(runtime string) (iFunction, error) {
 	Runtime(runtime).CheckValidityOrExit()
 
@@ -43,6 +51,8 @@ func getFunction(runtime string) (iFunction, error) {
 		return newPython(), nil
 	case string(Go119):
 		return newGo(), nil
+	case string(Rust167):
+		return newRust(), nil
 	default:
 		return nil, fmt.Errorf("ERROR: This runtime isn't supported yet.")
 	}
