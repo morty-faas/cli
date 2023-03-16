@@ -1,14 +1,15 @@
 package utils
 
 import (
+	"log"
 	"os"
-	"path/filepath"
 )
 
 type iFunction interface {
 	setName(name string)
 	getName() string
 	getWorkingDir() string
+	setWorkingDir(path string)
 	init()
 }
 
@@ -16,6 +17,7 @@ type function struct {
     Name  string `json:"name"`
     Runtime string	`json:"runtime"`
 		requiredFiles []string
+		workingDir string
 }
 
 func (f *function) setName(name string) {
@@ -29,18 +31,21 @@ func (f *function) getName() string {
 func (f *function) getWorkingDir() string {
 	// Please, use this function to get the path to the function's working directory.
 	// This function will be change in the future in order to get the current working directory.
-	if _, err := os.Stat(".morty/config.json"); err == nil {
-			return  "./"
-	}
+	return f.workingDir
+}
 
-	if _, err := os.Stat(filepath.Join("./", f.Name, ".morty/config.json")); err == nil {
-			return  filepath.Join("./", f.Name)
-	}
-
-	return  filepath.Join("./", f.Name)
+func (f *function) setWorkingDir(path string) {
+	f.workingDir = path
 }
 
 func (f *function) init() {
-	fetchTemplateFiles(*f)
-	create_config_file(*f)
+	err := fetchTemplateFiles(*f)
+	if err != nil {
+		os.RemoveAll(f.getWorkingDir())
+		log.Fatal(err)
+	}
+	err = create_config_file(*f)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

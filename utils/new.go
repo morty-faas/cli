@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -11,24 +12,25 @@ import (
 
 func newNode19() iFunction {
 	return &function{
-		Name:  "default-node-function",
-		Runtime: string(Node19),
+		Name:          "default-node-function",
+		Runtime:       string(Node19),
 		requiredFiles: []string{"handler.js", "package.json"},
 	}
 }
 
 func newPython() iFunction {
 	return &function{
-		Name:  "default-python-function",
-		Runtime: string(Python3),
+		Name:          "default-python-function",
+		Runtime:       string(Python3),
 		requiredFiles: []string{"handler.py", "requirements.txt"},
 	}
 }
 
 func newGo() iFunction {
 	return &function{
-		Name:  "default-go-function",
-		Runtime: string(Go119),
+		Name:          "default-go-function",
+		Runtime:       string(Go119),
+		workingDir:    "default-go-function",
 		requiredFiles: []string{"handler.go", "go.mod"},
 	}
 }
@@ -58,26 +60,26 @@ func getFunction(runtime string) (iFunction, error) {
 	}
 }
 
-func New(name string, runtime string) {
+func New(name string, path string, runtime string) {
 	function, err := getFunction(runtime)
+	function.setWorkingDir(path)
 	if err != nil {
 		log.Fatal("ERROR: internal factory error.", err)
 		return
 	}
 
 	function.setName(name)
-	workingDir := function.getWorkingDir()
-	if _, err := os.Stat(workingDir); !os.IsNotExist(err) {
+	if _, err := os.Stat(function.getWorkingDir()); !os.IsNotExist(err) {
 		log.Fatal("ERROR: Function already exists. Please consider using a different name.")
 	}
-	err = os.MkdirAll(workingDir, 0755)
+	err = os.MkdirAll(function.getWorkingDir(), 0755)
 	if err != nil {
 		log.Fatal("ERROR: Cannot create function directory: ", err)
 	}
 	function.init()
 
 	fmt.Println("Function " + function.getName() + " initialized!")
-	fmt.Println("You can now start to develop your function by editing the files in the working directory (" + workingDir + ").")
+	fmt.Println("You can now start to develop your function by editing the files in the working directory (" + function.getWorkingDir() + ").")
 }
 
 func writeFile(filename string, content string) {
@@ -87,35 +89,31 @@ func writeFile(filename string, content string) {
 	}
 }
 
-func fetchTemplateFiles(f function) {
-    revert := false
-    for _, file := range f.requiredFiles {
-        response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.Runtime + "/function/" + file)
-        if err != nil || response.StatusCode != 200 {
-            revert = true
-        }
-        defer response.Body.Close()
-        template, err := io.ReadAll(response.Body)
-				if err != nil {
-					log.Fatal("ERROR: An error occurred while reading the template file: ", err)
-				}
-        writeFile(f.getWorkingDir() + "/"+file, string(template))
-    }
-
-    if revert {
-        os.RemoveAll(f.getWorkingDir())
-        log.Fatal("ERROR: Cannot fetch template files. Please check your internet connection.\n\nReverting changes...")
-    }
+func fetchTemplateFiles(f function) error {
+	for _, file := range f.requiredFiles {
+		response, err := http.Get(RUNTIME_TEMPLATES_ENDPOINTS + f.Runtime + "/function/" + file)
+		if err != nil || response.StatusCode != 200 {
+			return errors.New("ERROR: Cannot fetch template files. Please check your internet connection.\n\nReverting changes...")
+		}
+		defer response.Body.Close()
+		template, err := io.ReadAll(response.Body)
+		if err != nil {
+			return fmt.Errorf("ERROR: An error occurred while reading the template file: %q", err)
+		}
+		writeFile(f.getWorkingDir()+"/"+file, string(template))
+	}
+	return nil
 }
 
-func create_config_file(f function) {
-    config, err := json.Marshal(f)
+func create_config_file(f function) error {
+	config, err := json.Marshal(f)
 	if err != nil {
-		log.Fatal("ERROR: An error occurred while creating the content of the config file: ", err)
+		return fmt.Errorf("ERROR: An error occurred while creating the content of the config file: %q", err)
 	}
-    err = os.MkdirAll(f.getWorkingDir() + "/.morty", 0755)
+	err = os.MkdirAll(f.getWorkingDir()+"/.morty", 0755)
 	if err != nil {
-		log.Fatal("ERROR: Cannot create config file: ", err)
+		return fmt.Errorf("ERROR: Cannot create config file: %q", err)
 	}
-    writeFile(f.getWorkingDir() + "/.morty/config.json", string(config))
+	writeFile(f.getWorkingDir()+"/.morty/config.json", string(config))
+	return nil
 }

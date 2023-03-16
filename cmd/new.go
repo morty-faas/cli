@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"morty/utils"
+	"path"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -23,17 +24,25 @@ var newCmd = &cobra.Command{
 		return fmt.Errorf("invalid function name specified")
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		name := args[0]
+
 		runtime := cmd.Flags().Lookup("runtime").Value.String()
 		utils.Runtime(runtime).CheckValidityOrExit()
 
-		name := args[0]
-
-		utils.New(name, runtime)
+		path_folder := cmd.Flags().Lookup("path").Value.String()
+		if path_folder == "" {
+			// If path is not specified, use the current directory
+			path_folder = name
+		} else {
+			path_folder = path.Join(path_folder, name)
+		}
+		utils.New(name, path_folder, runtime)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(newCmd)
+	newCmd.Flags().StringP("path", "p", "", "Path to the function's working directory. If not specified, the current directory will be used.")
 	newCmd.Flags().StringP("runtime", "r", "", fmt.Sprintf("Runtime of the function : %s", utils.GetAvailableRuntimesAsString()))
 	newCmd.MarkFlagRequired("runtime")
 }
