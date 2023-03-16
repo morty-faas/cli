@@ -141,7 +141,11 @@ func compressLZ4(filename string) error {
 	return ioutil.WriteFile(fmt.Sprintf("%s.lz4", absPath), buff.Bytes(), 0644)
 }
 
-func Build(name string, runtime string, folder string, buildArgs []string) {
+func Build(folder string, buildArgs []string) {
+	name := GetFunctionValueFromConfig(folder, "name")
+	runtime := GetFunctionValueFromConfig(folder, "runtime")
+
+	Runtime(runtime).CheckValidityOrExit()
 
 	// Check if user is root
 	currentUser, e := user.Current()
@@ -193,18 +197,10 @@ func Build(name string, runtime string, folder string, buildArgs []string) {
 
 }
 
-func BuildIntuitive(name string, buildArgs []string) {
-	f := &function{Name: name}
-	folder := f.getWorkingDir()
-	runtime := GetFunctionValueFromConfig(folder, "runtime")
-	log.Println("Building intuitive function: ", name, " with runtime: ", runtime, "in folder: ", folder)
-	Build(name, runtime, folder, buildArgs)
-}
-
 func GetFunctionValueFromConfig(folder string, parameter string) string {
 	file, err := os.Open(filepath.Join(folder, ".morty/config.json"))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("ERROR: cannot open config file. Does the .morty folder exist?")
 	}
 	defer file.Close()
 
