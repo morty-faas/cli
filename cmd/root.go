@@ -10,6 +10,7 @@ import (
 	"morty/cliconfig"
 	"morty/cmd/config"
 	"morty/cmd/function"
+	"morty/cmd/runtime"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -73,4 +74,5 @@ func Execute() {
 func init() {
 	rootCmd.AddCommand(config.RootCmd)
 	rootCmd.AddCommand(function.RootCmd)
+	rootCmd.AddCommand(runtime.RootCmd)
 }
