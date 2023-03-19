@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/hashicorp/go-getter"
@@ -85,4 +86,20 @@ func injectWorkspaceFile(opts *Options) error {
 	}
 
 	return os.WriteFile(path.Join(opts.Directory, mortyWorkspaceFile), by, 0644)
+}
+
+// functionFromFile will read the Morty workspace file and return a function struct
+func functionFromFile(folder string) (function, error) {
+	path := filepath.Join(folder, mortyWorkspaceFile)
+	log.Debugf("Reading function config file: %s\n", path)
+
+	byteValue, err := os.ReadFile(path)
+	if err != nil {
+		log.Errorf("Unable to read %s", path)
+		return function{}, err
+	}
+	result := function{}
+	yaml.Unmarshal([]byte(byteValue), &result)
+
+	return result, nil
 }
