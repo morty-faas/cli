@@ -6,7 +6,7 @@ Morty CLI is a tool that helps you to create, build and deploy your function.
 
 ## Configure your context
 
-Morty CLI has the ability to work with multiple contexts. By default, Morty will run with the following context : 
+Morty CLI has the ability to work with multiple contexts. By default, Morty will run with the following context :
 
 ```
 Name         : localhost
@@ -14,21 +14,21 @@ Gateway URL  : http://localhost:8080
 Registry URL : http://localhost:8081
 ```
 
-To add your own context, use the following command : 
+To add your own context, use the following command :
 
 ```bash
 morty config add-context $CONTEXT_NAME --gateway=$GATEWAY --registry=$REGISTRY
 ```
 
-Replace `$CONTEXT_NAME`, `$GATEWAY`, `$REGISTRY` with your own values. 
+Replace `$CONTEXT_NAME`, `$GATEWAY`, `$REGISTRY` with your own values.
 
-To see all the contexts available in your configuration, use the following command: 
+To see all the contexts available in your configuration, use the following command:
 
 ```bash
 morty config contexts
 ```
 
-You can view the information about your current context by running the following command : 
+You can view the information about your current context by running the following command :
 
 ```bash
 morty config current-context
@@ -36,7 +36,7 @@ morty config current-context
 
 By default, Morty CLI configuration is stored in `~/.morty/config.yaml`. If you want, you can use a configuration file at another location by exporting the following environment variable : `export MORTYCONFIG=/path/to/your/config.yaml`.
 
-To switch to a different context, run the following command : 
+To switch to a different context, run the following command :
 
 ```bash
 morty config use-context $CONTEXT_NAME
@@ -46,7 +46,7 @@ morty config use-context $CONTEXT_NAME
 
 A logger is embedded in the code. You need to activate it to be able to see the logs.
 
-To enable it, simply export the following environment variable with the level you want : 
+To enable it, simply export the following environment variable with the level you want :
 
 ```bash
 export MORTY_LOG=debug
@@ -63,13 +63,12 @@ Gateway URL  : http://162.38.112.57:8080
 Registry URL : http://162.38.112.57:8081
 
 # Output with MORTY_LOG
-INFO[0000] Loading configuration from path: /Users/thomas/.morty/config.yaml 
-INFO[0000] Active context : thomas-dev                  
+INFO[0000] Loading configuration from path: /Users/thomas/.morty/config.yaml
+INFO[0000] Active context : thomas-dev
 Name         : thomas-dev
 Gateway URL  : http://162.38.112.57:8080
 Registry URL : http://162.38.112.57:8081
 ```
-
 
 ## Create a new function
 
