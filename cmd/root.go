@@ -4,6 +4,10 @@ Copyright © 2023 polyxia-org
 package cmd
 
 import (
+	"context"
+	"log"
+	"morty/cliconfig"
+	"morty/cmd/config"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -13,6 +17,15 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "morty",
 	Short: "Morty allows you to manage and invoke functions over Polyxia.",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		cfg, err := cliconfig.Load()
+		if err != nil {
+			log.Fatal(err)
+		}
+		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey, cfg)
+		cmd.SetContext(ctx)
+	},
+	SilenceUsage: true,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -25,10 +38,5 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.morty.yaml)")
-
+	rootCmd.AddCommand(config.RootCmd)
 }

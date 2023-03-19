@@ -4,6 +4,44 @@ Morty CLI is a tool that helps you to create, build and deploy your function.
 
 # Usage
 
+## Configure your context
+
+Morty CLI has the ability to work with multiple contexts. By default, Morty will run with the following context : 
+
+```
+Name         : localhost
+Gateway URL  : http://localhost:8080
+Registry URL : http://localhost:8081
+```
+
+To add your own context, use the following command : 
+
+```bash
+morty config add-context $CONTEXT_NAME --gateway=$GATEWAY --registry=$REGISTRY
+```
+
+Replace `$CONTEXT_NAME`, `$GATEWAY`, `$REGISTRY` with your own values. 
+
+To see all the contexts available in your configuration, use the following command: 
+
+```bash
+morty config contexts
+```
+
+You can view the information about your current context by running the following command : 
+
+```bash
+morty config current-context
+```
+
+By default, Morty CLI configuration is stored in `~/.morty/config.yaml`. If you want, you can use a configuration file at another location by exporting the following environment variable : `export MORTYCONFIG=/path/to/your/config.yaml`.
+
+To switch to a different context, run the following command : 
+
+```bash
+morty config use-context $CONTEXT_NAME
+```
+
 ## Create a new function
 
 ```bash
