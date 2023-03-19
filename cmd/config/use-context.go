@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"morty/cliconfig"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,8 @@ var useContextCmd = &cobra.Command{
 		cfg := cmd.Context().Value(cliconfig.CtxKey).(*cliconfig.Config)
 
 		name := args[0]
+
+		log.Debugf("Updating active context to '%s'", name)
 
 		if err := cfg.UseContext(name); err != nil {
 			return err

@@ -8,6 +8,7 @@ import (
 	"path"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 )
@@ -105,6 +106,7 @@ func defaultConfig() *Config {
 }
 
 func (c *Config) Save() error {
+	log.Debugf("Saving configuration to %s", c.location)
 	by, err := yaml.Marshal(c)
 	if err != nil {
 		return err
@@ -123,6 +125,8 @@ func Load() (*Config, error) {
 		path = pathFromEnv
 	}
 
+	log.Infof("Loading configuration from path: %s", path)
+
 	v := viper.New()
 	v.SetConfigFile(path)
 
@@ -130,6 +134,7 @@ func Load() (*Config, error) {
 		// If the Configuration file is not found, and if we use the default location, then we can create
 		// the Configuration file on the disk for future operations
 		if path == sanitizeDefaultConfigLocation() {
+			log.Debug("Configuration file doesn't exist on disk, initializing a new one")
 			return initConfigFile()
 		}
 		return nil, err

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"morty/cliconfig"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +27,8 @@ var addContextCmd = &cobra.Command{
 			Gateway:  gateway,
 			Registry: registry,
 		}
+
+		log.Debugf("Adding context '%s' (gateway: %s, registry: %s)", name, gateway, registry)
 
 		// We add the context to our configuration and we set it to the current context
 		// before saving the configuration on disk.

@@ -42,6 +42,35 @@ To switch to a different context, run the following command :
 morty config use-context $CONTEXT_NAME
 ```
 
+## Logger
+
+A logger is embedded in the code. You need to activate it to be able to see the logs.
+
+To enable it, simply export the following environment variable with the level you want : 
+
+```bash
+export MORTY_LOG=debug
+```
+
+You should now see logs :
+
+```bash
+morty config current-context
+
+# Output without MORTY_LOG set
+Name         : thomas-dev
+Gateway URL  : http://162.38.112.57:8080
+Registry URL : http://162.38.112.57:8081
+
+# Output with MORTY_LOG
+INFO[0000] Loading configuration from path: /Users/thomas/.morty/config.yaml 
+INFO[0000] Active context : thomas-dev                  
+Name         : thomas-dev
+Gateway URL  : http://162.38.112.57:8080
+Registry URL : http://162.38.112.57:8081
+```
+
+
 ## Create a new function
 
 ```bash
