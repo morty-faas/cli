@@ -73,17 +73,19 @@ Registry URL : http://162.38.112.57:8081
 
 ## Create a new function
 
-```bash
-morty new --runtime <runtime> FUNCTION_NAME
-```
-
-_This command creates a new workspace and default configuration for your function._
-
-Example:
+To create a new function, also called a **workspace**, you can use the following command:
 
 ```bash
-morty new --runtime node-19 myFirstFuntion
+morty function init $FUNCTION_NAME <opt:$DIRECTORY>
+# or alias
+morty fn init $FUNCTION_NAME <opt:$DIRECTORY>
 ```
+
+> By default, if the flag `--runtime` is not specified, the function will be created using the `node-19` runtime.
+
+Replace `$FUNCTION_NAME` with your own value. You can also specify an additional argument `$DIRECTORY` to control where the function will be created.
+
+This command will create for you the skeleton of the function to enable fast development. Please note that the **morty.yaml** file inside the function directory is mandatory and it contains function metadata used during the build process.
 
 ## Package the function
 

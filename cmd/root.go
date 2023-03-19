@@ -9,6 +9,7 @@ import (
 	"log"
 	"morty/cliconfig"
 	"morty/cmd/config"
+	"morty/cmd/function"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -22,7 +23,7 @@ const (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "morty",
-	Short: "Morty allows you to manage and invoke functions over Polyxia.",
+	Short: "Morty CLI is used to interact with the Morty serverless platform.",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// By default, if there is no value for the environment variable
 		// MORTY_LOG, all logs are disabled.
@@ -58,7 +59,6 @@ var rootCmd = &cobra.Command{
 		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey, cfg)
 		cmd.SetContext(ctx)
 	},
-	SilenceUsage: true,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -72,4 +72,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(config.RootCmd)
+	rootCmd.AddCommand(function.RootCmd)
 }
