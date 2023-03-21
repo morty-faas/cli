@@ -3,10 +3,8 @@ module morty
 go 1.19
 
 require (
-	github.com/google/uuid v1.3.0
+	github.com/briandowns/spinner v1.23.0
 	github.com/hashicorp/go-getter v1.7.1
-	github.com/otiai10/copy v1.9.0
-	github.com/pierrec/lz4 v2.6.1+incompatible
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
@@ -22,7 +20,6 @@ require (
 	cloud.google.com/go/storage v1.27.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
-	github.com/briandowns/spinner v1.23.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/frankban/quicktest v1.14.4 // indirect
@@ -30,6 +27,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.1 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
