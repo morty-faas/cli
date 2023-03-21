@@ -16,4 +16,5 @@ var (
 func init() {
 	RootCmd.AddCommand(createCmd)
 	RootCmd.AddCommand(buildCmd)
+	RootCmd.AddCommand(invokeCmd)
 }

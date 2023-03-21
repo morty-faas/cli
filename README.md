@@ -151,3 +151,46 @@ _This command will send your function to the registry, and create it inside the 
 ```bash
 morty function build $FUNCTION_DIRECTORY
 ```
+
+## Invoke a function
+
+Once your function has been built, you can invoke it through the CLI. We assume here that you have a function `hello-world` already built in the system that produces a JSON output :
+```json
+{
+    "output": "Hello from my Hello World function"
+}
+```
+
+To invoke your function, simply run : 
+
+```bash
+morty fn invoke hello-world
+
+# Output
+{
+    "output": "Hello from my Hello World function"
+}
+```
+
+By default, the command will send an HTTP `GET` request on the function endpoint to invoke it.
+
+If you want to invoke your function with a different method, with a body or custom headers, you can use the flags of the `invoke` command :
+
+For example, to send a `POST` request with data for your function : 
+
+```
+morty fn invoke -X POST -d '{"foo":"bar"}' hello-world
+```
+
+To add custom headers to the request, for example to precise the `Content-Type` header, use the following command : 
+
+```
+morty fn invoke -X POST -d '{"foo":"bar"}' -H "Content-Type: application/json" hello-world
+```
+
+For other methods or flags, use the command help : 
+
+```
+morty fn invoke --help
+```
+
