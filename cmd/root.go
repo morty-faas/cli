@@ -6,7 +6,6 @@ package cmd
 import (
 	"context"
 	"io"
-	"log"
 	"morty/cliconfig"
 	"morty/cmd/config"
 	"morty/cmd/function"
@@ -14,6 +13,7 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -36,16 +36,26 @@ var rootCmd = &cobra.Command{
 		//
 		// If a value is provided, a logger will be configured. If the value
 		// can't be parsed, the default log level will be applied, INFO.
-		loglevel := os.Getenv(logEnvVarKey)
-		if loglevel != "" {
-			lvl, err := logrus.ParseLevel(loglevel)
-			if err != nil {
-				lvl = logrus.InfoLevel
-			}
-			logrus.SetLevel(lvl)
+		var level log.Level
+
+		envFlag := os.Getenv(logEnvVarKey)
+		cliFlag, _ := cmd.Flags().GetCount("verbose")
+
+		switch cliFlag {
+			case 1: 
+				level = log.InfoLevel
+			case 2:
+				level = log.DebugLevel
+			case 3:
+				level = log.TraceLevel
+			default:
+				level, _ = logrus.ParseLevel(envFlag)
+		}
+
+		if level == 0 {
+			log.SetOutput(io.Discard)
 		} else {
-			// Remove the entire output of logrus.* calls
-			logrus.SetOutput(io.Discard)
+			logrus.SetLevel(level)
 		}
 
 		// Add the configuration into the root context, so all commands can get it
@@ -55,7 +65,7 @@ var rootCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		logrus.Infof("Active context : %s", cfg.Current)
+		log.Infof("Active context : %s", cfg.Current)
 
 		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey, cfg)
 		cmd.SetContext(ctx)
@@ -75,4 +85,6 @@ func init() {
 	rootCmd.AddCommand(config.RootCmd)
 	rootCmd.AddCommand(function.RootCmd)
 	rootCmd.AddCommand(runtime.RootCmd)
+
+	rootCmd.PersistentFlags().CountP("verbose", "v", "Level of verbosity: -v for INFO, -vv for DEBUG, -vvv for TRACE.")
 }
