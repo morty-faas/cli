@@ -23,7 +23,7 @@ func Zip(src, dest string) error {
 
 	// Walk the directory tree
 	return filepath.Walk(src, func(filePath string, fileInfo os.FileInfo, err error) error {
-		log.Infof("Adding %s to zip archive\n", filePath)
+		log.Tracef("Adding '%s' to '%s'\n", filePath, dest)
 		if err != nil {
 			return err
 		}
