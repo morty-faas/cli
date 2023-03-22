@@ -12,7 +12,7 @@ var currentContextCmd = &cobra.Command{
 	Short: "Display information about your current context",
 	Long:  `Display information about your current context`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg := cmd.Context().Value(cliconfig.CtxKey).(*cliconfig.Config)
+		cfg := cmd.Context().Value(cliconfig.CtxKey{}).(*cliconfig.Config)
 
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {

@@ -16,13 +16,7 @@ var buildCmd = &cobra.Command{
 	Short: "Build a function image to be run in Morty. If PATH is not provided, the current directory will be used.",
 	Long:  `This command allows you to build a function image that can be run in Morty.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		cfg := cmd.Context().Value(cliconfig.CtxKey).(*cliconfig.Config)
-
-		ctx, err := cfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
+		ctx := cmd.Context().Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
 
 		path := "."
 		if len(args) > 0 {

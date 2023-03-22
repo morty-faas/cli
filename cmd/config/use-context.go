@@ -14,7 +14,7 @@ var useContextCmd = &cobra.Command{
 	Long:  `Update your current context with one of the contexts available in your configuration`,
 	Args:  validateContextName,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg := cmd.Context().Value(cliconfig.CtxKey).(*cliconfig.Config)
+		cfg := cmd.Context().Value(cliconfig.CtxKey{}).(*cliconfig.Config)
 
 		name := args[0]
 

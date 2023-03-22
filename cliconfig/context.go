@@ -13,8 +13,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type CtxKey struct{}
+type CurrentCtxKey struct{}
+
 const (
-	CtxKey                     = "config"
 	mortyConfigDefaultLocation = "$HOME/.morty/config.yaml"
 	mortyConfigEnvVarKey       = "MORTYCONFIG"
 )

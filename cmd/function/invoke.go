@@ -16,11 +16,7 @@ var invokeCmd = &cobra.Command{
 	Long:  `Invoke a function using default options or choose HTTP method, body, headers etc.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg := cmd.Context().Value(cliconfig.CtxKey).(*cliconfig.Config)
-		ctx, err := cfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
+		ctx := cmd.Context().Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
 
 		// Safe call, validation is performed by cobra.ExactArgs(1) above
 		name := args[0]

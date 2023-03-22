@@ -20,7 +20,7 @@ var addContextCmd = &cobra.Command{
 		registry, _ := cmd.Flags().GetString("registry")
 		gateway, _ := cmd.Flags().GetString("gateway")
 
-		cfg := cmd.Context().Value(cliconfig.CtxKey).(*cliconfig.Config)
+		cfg := cmd.Context().Value(cliconfig.CtxKey{}).(*cliconfig.Config)
 
 		ctx := &cliconfig.Context{
 			Name:     name,

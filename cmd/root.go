@@ -42,14 +42,14 @@ var rootCmd = &cobra.Command{
 		cliFlag, _ := cmd.Flags().GetCount("verbose")
 
 		switch cliFlag {
-			case 1: 
-				level = log.InfoLevel
-			case 2:
-				level = log.DebugLevel
-			case 3:
-				level = log.TraceLevel
-			default:
-				level, _ = logrus.ParseLevel(envFlag)
+		case 1:
+			level = log.InfoLevel
+		case 2:
+			level = log.DebugLevel
+		case 3:
+			level = log.TraceLevel
+		default:
+			level, _ = logrus.ParseLevel(envFlag)
 		}
 
 		if level == 0 {
@@ -65,9 +65,16 @@ var rootCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		currentCtx, err := cfg.GetCurrentContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		log.Infof("Active context : %s", cfg.Current)
 
-		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey, cfg)
+		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey{}, cfg)
+		ctx = context.WithValue(ctx, cliconfig.CurrentCtxKey{}, currentCtx)
+
 		cmd.SetContext(ctx)
 	},
 }

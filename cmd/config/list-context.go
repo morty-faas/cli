@@ -12,7 +12,7 @@ var listContextCmd = &cobra.Command{
 	Short: "List all contexts available in the configuration",
 	Long:  `List all contexts available in the configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg := cmd.Context().Value(cliconfig.CtxKey).(*cliconfig.Config)
+		cfg := cmd.Context().Value(cliconfig.CtxKey{}).(*cliconfig.Config)
 
 		for i, c := range cfg.Contexts {
 			fmt.Printf("Name         : %s\n", c.Name)
