@@ -2,6 +2,7 @@ package function
 
 import (
 	"errors"
+	"morty/pkg/debug"
 	"os"
 	"path"
 	"path/filepath"
@@ -24,6 +25,7 @@ type (
 		Directory string
 	}
 	function struct {
+		Path    string `yaml:"-"`
 		Name    string `yaml:"name"`
 		Runtime string `yaml:"runtime"`
 	}
@@ -36,18 +38,49 @@ var (
 )
 
 // New initialize a new function on the disk with the given options
-func New(opts *Options) error {
+func New(opts *Options) (*function, error) {
 	if opts.Directory == "" {
-		return ErrFunctionDirectoryRequired
+		return nil, ErrFunctionDirectoryRequired
 	}
 
 	log.Infof("Creating new function workspace into '%s'", opts.Directory)
 
 	if err := downloadTemplate(opts); err != nil {
-		return err
+		return nil, err
 	}
 
-	return injectWorkspaceFile(opts)
+	if err := injectWorkspaceFile(opts); err != nil {
+		return nil, err
+	}
+
+	f := &function{
+		Name:    opts.Name,
+		Runtime: opts.Runtime,
+		Path:    opts.Directory,
+	}
+
+	log.Debugf("Function created: %v", debug.JSON(f))
+
+	return f, nil
+}
+
+// NewFromFile will read the Morty workspace file and return a function
+func NewFromFile(folder string) (*function, error) {
+	path := filepath.Join(folder, mortyWorkspaceFile)
+	log.Debugf("Reading function config file: %s\n", path)
+
+	byteValue, err := os.ReadFile(path)
+	if err != nil {
+		log.Errorf("Unable to read %s", path)
+		return nil, err
+	}
+	f := &function{}
+	yaml.Unmarshal([]byte(byteValue), f)
+	f.Path = folder
+
+	log.Debugf("Function loaded from file %s: %v", path, debug.JSON(f))
+
+	return f, nil
 }
 
 // downloadTemplate will download the template for this workspace based on the given runtime.
@@ -86,20 +119,4 @@ func injectWorkspaceFile(opts *Options) error {
 	}
 
 	return os.WriteFile(path.Join(opts.Directory, mortyWorkspaceFile), by, 0644)
-}
-
-// functionFromFile will read the Morty workspace file and return a function struct
-func functionFromFile(folder string) (function, error) {
-	path := filepath.Join(folder, mortyWorkspaceFile)
-	log.Debugf("Reading function config file: %s\n", path)
-
-	byteValue, err := os.ReadFile(path)
-	if err != nil {
-		log.Errorf("Unable to read %s", path)
-		return function{}, err
-	}
-	result := function{}
-	yaml.Unmarshal([]byte(byteValue), &result)
-
-	return result, nil
 }

@@ -31,7 +31,7 @@ var createCmd = &cobra.Command{
 			Directory: dir,
 		}
 
-		if err := function.New(opts); err != nil {
+		if _, err := function.New(opts); err != nil {
 			return fmt.Errorf("failed to initialize function: %v", err)
 		}
 
