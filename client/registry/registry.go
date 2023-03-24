@@ -73,5 +73,9 @@ func (rc *client) BuildFn(context context.Context, opts *BuildFnRequest) (string
 	defer res.Body.Close()
 
 	resourceUri, err := serdejson.Deserialize[string](res.Body)
+	if err != nil {
+		return "", err
+	}
+
 	return *resourceUri, err
 }
