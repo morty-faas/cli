@@ -63,16 +63,11 @@ func Test_InvokeFn_InvokeFnOk(t *testing.T) {
 		Headers: nil,
 	}
 
-	by, _ := json.Marshal(map[string]interface{}{
-		"city":         "Montpellier",
-		"temp_celsius": float64(30),
-	})
-
-	expected := string(by)
+	expected := `{"city": "Montpellier", "temp_celsius": 30}`
 
 	s := testutils.NewTestServer(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(expected)
+		w.Write([]byte(expected))
 	})
 	defer s.Close()
 

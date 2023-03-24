@@ -79,8 +79,12 @@ func (gc *client) InvokeFn(context context.Context, opts *InvokeFnRequest) (stri
 		return "", makeApiError(res.Body)
 	}
 
-	fnPayload, err := serdejson.Deserialize[string](res.Body)
-	return *fnPayload, err
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
 
 // CreateFn create a function and return an error if there is one
