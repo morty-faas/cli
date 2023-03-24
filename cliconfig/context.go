@@ -78,6 +78,9 @@ func (c *Config) AddContext(context *Context) error {
 		return ErrContextAlreadyExistsWithName
 	}
 
+	context.Gateway = sanitizeUrl(context.Gateway)
+	context.Registry = sanitizeUrl(context.Registry)
+
 	c.Contexts = append(c.Contexts, *context)
 	return nil
 }
@@ -178,4 +181,12 @@ func initConfigFile() (*Config, error) {
 func sanitizeDefaultConfigLocation() string {
 	user, _ := user.Current()
 	return strings.Replace(mortyConfigDefaultLocation, "$HOME", user.HomeDir, -1)
+}
+
+// sanitizeUrl will remove the trailing slash from the url if present.
+func sanitizeUrl(url string) string {
+	if strings.HasSuffix(url, "/") {
+		return strings.TrimSuffix(url, "/")
+	}
+	return url
 }

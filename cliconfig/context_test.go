@@ -117,3 +117,13 @@ func Test_AddContext(t *testing.T) {
 	err = config.AddContext(&expected)
 	assert.ErrorIs(t, err, ErrContextAlreadyExistsWithName)
 }
+
+func Test_SanitizeUrl(t *testing.T) {
+	url := "http://localhost:8080/"
+	expected := "http://localhost:8080"
+
+	assert.Equal(t, expected, sanitizeUrl(url))
+
+	url = "http://localhost:8080"
+	assert.Equal(t, expected, sanitizeUrl(url))
+}
