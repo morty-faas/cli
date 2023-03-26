@@ -33,7 +33,7 @@ var invokeCmd = &cobra.Command{
 		data, _ := cmd.Flags().GetString("data")
 		headers, _ := cmd.Flags().GetStringArray("headers")
 		jsonPathQuery, _ := cmd.Flags().GetString("query")
-
+		params, _ := cmd.Flags().GetStringArray("param")
 		gw := gateway.NewClient(ctx.Gateway)
 
 		opts := &gateway.InvokeFnRequest{
@@ -41,6 +41,7 @@ var invokeCmd = &cobra.Command{
 			Method:  method,
 			Body:    data,
 			Headers: headers,
+			Params:  params,
 		}
 
 		response, err := gw.InvokeFn(cmd.Context(), opts)
@@ -84,6 +85,7 @@ func init() {
 	invokeCmd.PersistentFlags().StringP("data", "d", "", "The body to pass to the invocation request.")
 	invokeCmd.PersistentFlags().StringP("query", "q", "$", "A valid JSON Path expression to execute on the function response. If the function output isn't a JSON, the flag will have no effect.")
 	invokeCmd.PersistentFlags().StringArrayP("headers", "H", []string{}, "The headers to pass to invocation request.")
+	invokeCmd.PersistentFlags().StringArrayP("param", "p", []string{}, "Params to pass to the invocation request.")
 }
 
 // validateHttpMethod will return an error if the user has provided an HTTP method that is not supported

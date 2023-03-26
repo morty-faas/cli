@@ -172,6 +172,17 @@ morty fn invoke hello-world
 }
 ```
 
+You can call your function with parameters by using the `--param` flag : 
+
+```bash
+morty fn invoke --param name=Morty hello-world
+
+# Output
+{
+    "output": "Hello Morty from my Hello World function"
+}
+```
+
 By default, the command will send an HTTP `GET` request on the function endpoint to invoke it.
 
 If you want to invoke your function with a different method, with a body or custom headers, you can use the flags of the `invoke` command :

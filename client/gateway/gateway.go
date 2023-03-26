@@ -37,6 +37,7 @@ type (
 		Method  string   `json:"method"`
 		Body    string   `json:"body"`
 		Headers []string `json:"headers"`
+		Params  []string `json:"params"`
 	}
 )
 
@@ -68,6 +69,21 @@ func (gc *client) InvokeFn(context context.Context, opts *InvokeFnRequest) (stri
 	}
 
 	uri := path.Join("invoke", opts.FnName)
+
+	// If the caller has passed params, add them to url
+	if len(opts.Params) > 0 {
+		invokeParams := ""
+		for _, param := range opts.Params {
+			keyValueParam := strings.Split(param, "=")
+			if len(keyValueParam) > 1 {
+				invokeParams += fmt.Sprintf("%s=%s&", keyValueParam[0], keyValueParam[1])
+			} else {
+				invokeParams += fmt.Sprintf("%s&", keyValueParam[0])
+			}
+		}
+		uri += fmt.Sprintf("?%s", strings.TrimSuffix(invokeParams, "&"))
+	}
+
 	res, err := gc.c.Generic(context, opts.Method, uri, body, headers)
 	if err != nil {
 		return "", err
