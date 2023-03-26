@@ -66,11 +66,15 @@ var invokeCmd = &cobra.Command{
 		// If the value is a JSON, encode it
 		if v, ok := output.(map[string]interface{}); ok {
 			by, _ := json.Marshal(v)
-			fmt.Println(string(by))
-			return nil
+			output = string(by)
 		}
 
-		fmt.Println(output)
+		// We don't want to print an output if the function
+		// returns an empty payload
+		if output != "null" {
+			fmt.Println(output)
+		}
+
 		return nil
 	},
 }
