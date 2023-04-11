@@ -39,11 +39,39 @@ type (
 		Headers []string `json:"headers"`
 		Params  []string `json:"params"`
 	}
+
+	ListFnRequest struct {
+	}
 )
 
 // NewClient initiate a new client for the Morty Gateway
 func NewClient(baseURL string) *client {
 	return &client{httpclient.NewClient(baseURL)}
+}
+
+func (gc *client) ListFn(context context.Context, opts *ListFnRequest) (map[string]string, error) {
+	log.Debugf("New list request with options: %v", debug.JSON(opts))
+
+	uri := "functions"
+	res, err := gc.c.Get(context, uri, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode >= 400 {
+		return nil, makeApiError(res.Body)
+	}
+
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var list map[string]string
+	json.Unmarshal(bytes, &list)
+
+	return list, nil
 }
 
 // InvokeFn invoke a function and return the resulting payload.
