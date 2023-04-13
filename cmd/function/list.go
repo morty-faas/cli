@@ -20,17 +20,15 @@ var listCmd = &cobra.Command{
 
 		gw := gateway.NewClient(ctx.Gateway)
 
-		opts := &gateway.ListFnRequest{}
-
-		functions, err := gw.ListFn(cmd.Context(), opts)
+		functions, err := gw.ListFn(cmd.Context(), &gateway.ListFnRequest{})
 		if err != nil {
 			return err
 		}
 
 		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"Name", "id"})
-		for k, v := range functions {
-			table.Append([]string{k, v})
+		table.SetHeader([]string{"ID", "NAME", "IMAGE"})
+		for _, fn := range *functions {
+			table.Append([]string{fn.Id, fn.Name, fn.ImageURL})
 		}
 
 		table.SetAutoWrapText(false)
