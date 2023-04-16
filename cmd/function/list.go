@@ -1,9 +1,12 @@
 package function
 
 import (
+	"encoding/json"
+	"errors"
 	"morty/cliconfig"
-	"morty/client/gateway"
 	"os"
+
+	morty "github.com/polyxia-org/morty-gateway/pkg/client"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -15,20 +18,26 @@ var listCmd = &cobra.Command{
 	Short:   "List functions",
 	Long:    "List functions",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		cmdContext := cmd.Context()
+		client := cmdContext.Value(cliconfig.GatewayClientContextKey{}).(*morty.APIClient)
 
-		ctx := cmd.Context().Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
-
-		gw := gateway.NewClient(ctx.Gateway)
-
-		functions, err := gw.ListFn(cmd.Context(), &gateway.ListFnRequest{})
+		functions, res, err := client.FunctionApi.GetFunctions(cmdContext).Execute()
 		if err != nil {
+			// If an error is returned by the API, parse it
+			if res != nil && res.Body != nil {
+				apiError := &morty.Error{}
+				if err := json.NewDecoder(res.Body).Decode(apiError); err != nil {
+					return err
+				}
+				return errors.New(apiError.GetMessage())
+			}
 			return err
 		}
 
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"ID", "NAME", "IMAGE"})
-		for _, fn := range *functions {
-			table.Append([]string{fn.Id, fn.Name, fn.ImageURL})
+		for _, fn := range functions {
+			table.Append([]string{fn.GetId(), fn.GetName(), fn.GetImage()})
 		}
 
 		table.SetAutoWrapText(false)

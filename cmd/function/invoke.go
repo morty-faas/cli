@@ -1,15 +1,32 @@
 package function
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"morty/cliconfig"
-	"morty/client/gateway"
+	"morty/pkg/debug"
+	"morty/pkg/httpclient"
 	"net/http"
 	"strings"
 
 	"github.com/oliveagle/jsonpath"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+)
+
+type invokeOptions struct {
+	FnName  string   `json:"functionName"`
+	Method  string   `json:"method"`
+	Body    string   `json:"body"`
+	Headers []string `json:"headers"`
+	Params  []string `json:"params"`
+}
+
+const (
+	invokeFunctionEndpoint = "functions/{name}/invoke"
 )
 
 var invokeCmd = &cobra.Command{
@@ -18,7 +35,7 @@ var invokeCmd = &cobra.Command{
 	Long:  `Invoke a function using default options or choose HTTP method, body, headers etc.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := cmd.Context().Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
+		cmdCtx := cmd.Context()
 
 		// Safe call, validation is performed by cobra.ExactArgs(1) above
 		name := args[0]
@@ -34,9 +51,8 @@ var invokeCmd = &cobra.Command{
 		headers, _ := cmd.Flags().GetStringArray("headers")
 		jsonPathQuery, _ := cmd.Flags().GetString("query")
 		params, _ := cmd.Flags().GetStringArray("param")
-		gw := gateway.NewClient(ctx.Gateway)
 
-		opts := &gateway.InvokeFnRequest{
+		opts := &invokeOptions{
 			FnName:  name,
 			Method:  method,
 			Body:    data,
@@ -44,7 +60,7 @@ var invokeCmd = &cobra.Command{
 			Params:  params,
 		}
 
-		response, err := gw.InvokeFn(cmd.Context(), opts)
+		response, err := invoke(cmdCtx, opts)
 		if err != nil {
 			return err
 		}
@@ -95,4 +111,64 @@ func validateHttpMethod(method string) error {
 		return nil
 	}
 	return fmt.Errorf("method %s is not supported", method)
+}
+
+// invoke a function and get the payload from it.
+func invoke(ctx context.Context, opts *invokeOptions) (string, error) {
+	// Create an HTTP client that can interact with our Morty backend
+	currentCtx := ctx.Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
+	cl := httpclient.NewClient(currentCtx.Gateway)
+
+	log.Debugf("New invocation request with options: %v", debug.JSON(opts))
+
+	headers := http.Header{}
+	// If the caller has passed headers, map them to http.Header
+	if opts.Headers != nil {
+		for _, header := range opts.Headers {
+			splitted := strings.Split(header, ":")
+			if len(splitted) != 2 {
+				return "", fmt.Errorf("header '%s' is not valid. Please use the correct format: 'Key: Value'", header)
+			}
+			hKey, hValue := splitted[0], splitted[1]
+			headers.Add(hKey, hValue)
+		}
+	}
+
+	var body io.Reader
+	if opts.Body != "" {
+		body = bytes.NewBuffer([]byte(opts.Body))
+	}
+
+	uri := strings.Replace(invokeFunctionEndpoint, "{name}", opts.FnName, -1)
+
+	// If the caller has passed params, add them to url
+	if len(opts.Params) > 0 {
+		invokeParams := ""
+		for _, param := range opts.Params {
+			keyValueParam := strings.Split(param, "=")
+			if len(keyValueParam) > 1 {
+				invokeParams += fmt.Sprintf("%s=%s&", keyValueParam[0], keyValueParam[1])
+			} else {
+				invokeParams += fmt.Sprintf("%s&", keyValueParam[0])
+			}
+		}
+		uri += fmt.Sprintf("?%s", strings.TrimSuffix(invokeParams, "&"))
+	}
+
+	res, err := cl.Generic(ctx, opts.Method, uri, body, headers)
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode >= 400 {
+		return "", err
+	}
+
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }

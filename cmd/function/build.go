@@ -1,9 +1,10 @@
 package function
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"morty/cliconfig"
-	"morty/client/gateway"
 	"morty/client/registry"
 	"morty/function"
 	"morty/pkg/archive"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	morty "github.com/polyxia-org/morty-gateway/pkg/client"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +34,7 @@ var buildCmd = &cobra.Command{
 		ctx := cmdContext.Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
 
 		// Initialize clients
-		gw := gateway.NewClient(ctx.Gateway)
+		client := cmdContext.Value(cliconfig.GatewayClientContextKey{}).(*morty.APIClient)
 		reg := registry.NewClient(ctx.Registry)
 
 		path := "."
@@ -67,12 +69,21 @@ var buildCmd = &cobra.Command{
 		}
 
 		// Create the function to be able to invoke it
-		createFnRequest := &gateway.CreateFnRequest{
-			Name:   f.Name,
-			Rootfs: ctx.Registry + fnUri,
+		image := ctx.Registry + fnUri
+		createFnRequest := morty.CreateFunctionRequest{
+			Name:  &f.Name,
+			Image: &image,
 		}
 
-		if _, err := gw.CreateFn(cmdContext, createFnRequest); err != nil {
+		if _, res, err := client.FunctionApi.CreateFunction(cmdContext).CreateFunctionRequest(createFnRequest).Execute(); err != nil {
+			// If an error is returned by the API, parse it
+			if res != nil && res.Body != nil {
+				apiError := &morty.Error{}
+				if err := json.NewDecoder(res.Body).Decode(apiError); err != nil {
+					return err
+				}
+				return errors.New(apiError.GetMessage())
+			}
 			return err
 		}
 		s.Stop()

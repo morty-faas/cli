@@ -15,6 +15,7 @@ import (
 
 type CtxKey struct{}
 type CurrentCtxKey struct{}
+type GatewayClientContextKey struct{}
 
 const (
 	mortyConfigDefaultLocation = "$HOME/.morty/config.yaml"

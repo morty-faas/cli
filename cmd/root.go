@@ -12,7 +12,7 @@ import (
 	"morty/cmd/runtime"
 	"os"
 
-	"github.com/sirupsen/logrus"
+	morty "github.com/polyxia-org/morty-gateway/pkg/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -49,13 +49,13 @@ var rootCmd = &cobra.Command{
 		case 3:
 			level = log.TraceLevel
 		default:
-			level, _ = logrus.ParseLevel(envFlag)
+			level, _ = log.ParseLevel(envFlag)
 		}
 
 		if level == 0 {
 			log.SetOutput(io.Discard)
 		} else {
-			logrus.SetLevel(level)
+			log.SetLevel(level)
 		}
 
 		// Add the configuration into the root context, so all commands can get it
@@ -74,6 +74,7 @@ var rootCmd = &cobra.Command{
 
 		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey{}, cfg)
 		ctx = context.WithValue(ctx, cliconfig.CurrentCtxKey{}, currentCtx)
+		ctx = context.WithValue(ctx, cliconfig.GatewayClientContextKey{}, makeMortyClient(currentCtx.Gateway))
 
 		cmd.SetContext(ctx)
 	},
@@ -94,4 +95,12 @@ func init() {
 	rootCmd.AddCommand(runtime.RootCmd)
 
 	rootCmd.PersistentFlags().CountP("verbose", "v", "Level of verbosity: -v for INFO, -vv for DEBUG, -vvv for TRACE.")
+}
+
+func makeMortyClient(baseURL string) *morty.APIClient {
+	return morty.NewAPIClient(&morty.Configuration{
+		Servers: morty.ServerConfigurations{
+			morty.ServerConfiguration{URL: baseURL},
+		},
+	})
 }
