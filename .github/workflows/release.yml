@@ -20,13 +20,14 @@ jobs:
     - uses: actions/checkout@v3
     - id: go-version
       run: echo "version=$(cat ./.go-version)" >> $GITHUB_OUTPUT
-    - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
     - uses: wangyoucao577/go-release-action@v1
       with:
+        pre_command: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
         github_token: ${{ secrets.GITHUB_TOKEN }}
         extra_files: LICENSE README.md
         project_path: "."
         binary_name: "morty"
+        asset_name: morty-${{ matrix.goos }}-${{ matrix.goarch }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         goversion: ${{ steps.go-version.outputs.version }}
