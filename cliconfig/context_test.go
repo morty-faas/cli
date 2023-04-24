@@ -118,6 +118,30 @@ func Test_AddContext(t *testing.T) {
 	assert.ErrorIs(t, err, ErrContextAlreadyExistsWithName)
 }
 
+func Test_RemoveContext(t *testing.T) {
+	expected := Context{
+		Name:     "test",
+		Gateway:  "test",
+		Registry: "test",
+	}
+
+	config := defaultConfig()
+
+	err := config.AddContext(&expected)
+	assert.NoError(t, err)
+	assert.Len(t, config.Contexts, 2)
+
+	err = config.RemoveContext("test")
+	assert.NoError(t, err)
+	assert.Len(t, config.Contexts, 1)
+
+	err = config.RemoveContext("thiscontextdoesnotexist")
+	assert.ErrorIs(t, err, ErrContextNotFound)
+
+	err = config.RemoveContext("localhost")
+	assert.ErrorIs(t, err, ErrRemoveDefaultContext)
+}
+
 func Test_SanitizeUrl(t *testing.T) {
 	url := "http://localhost:8080/"
 	expected := "http://localhost:8080"
