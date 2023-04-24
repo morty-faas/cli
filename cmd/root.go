@@ -23,7 +23,7 @@ const (
 )
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "morty",
 	Short: "Morty CLI is used to interact with the Morty serverless platform.",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -84,18 +84,18 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
+	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
 func init() {
-	rootCmd.AddCommand(config.RootCmd)
-	rootCmd.AddCommand(function.RootCmd)
-	rootCmd.AddCommand(runtime.RootCmd)
+	RootCmd.AddCommand(config.RootCmd)
+	RootCmd.AddCommand(function.RootCmd)
+	RootCmd.AddCommand(runtime.RootCmd)
 
-	rootCmd.PersistentFlags().CountP("verbose", "v", "Level of verbosity: -v for INFO, -vv for DEBUG, -vvv for TRACE.")
+	RootCmd.PersistentFlags().CountP("verbose", "v", "Level of verbosity: -v for INFO, -vv for DEBUG, -vvv for TRACE.")
 }
 
 func makeMortyClient(baseURL string) *morty.APIClient {
