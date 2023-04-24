@@ -2,7 +2,8 @@ package function
 
 import (
 	"fmt"
-	"morty/function"
+
+	"github.com/morty-faas/cli/function"
 
 	"github.com/spf13/cobra"
 )

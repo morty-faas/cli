@@ -2,7 +2,8 @@ package config
 
 import (
 	"fmt"
-	"morty/cliconfig"
+
+	"github.com/morty-faas/cli/cliconfig"
 
 	"github.com/spf13/cobra"
 )

@@ -5,13 +5,14 @@ import (
 	"context"
 	"io"
 	"mime/multipart"
-	"morty/pkg/debug"
-	"morty/pkg/httpclient"
-	"morty/pkg/serdejson"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/morty-faas/cli/pkg/debug"
+	"github.com/morty-faas/cli/pkg/httpclient"
+	"github.com/morty-faas/cli/pkg/serdejson"
 
 	log "github.com/sirupsen/logrus"
 )

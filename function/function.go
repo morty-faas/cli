@@ -2,11 +2,12 @@ package function
 
 import (
 	"errors"
-	"morty/pkg/debug"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/morty-faas/cli/pkg/debug"
 
 	"github.com/hashicorp/go-getter"
 	log "github.com/sirupsen/logrus"

@@ -3,7 +3,7 @@ Copyright © 2023 polyxia-org
 */
 package main
 
-import "morty/cmd"
+import "github.com/morty-faas/cli/cmd"
 
 func main() {
 	cmd.Execute()

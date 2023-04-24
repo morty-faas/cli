@@ -1,4 +1,4 @@
-module morty
+module github.com/morty-faas/cli
 
 go 1.19
 

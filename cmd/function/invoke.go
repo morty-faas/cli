@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"morty/cliconfig"
-	"morty/pkg/debug"
-	"morty/pkg/httpclient"
 	"net/http"
 	"strings"
+
+	"github.com/morty-faas/cli/cliconfig"
+	"github.com/morty-faas/cli/pkg/debug"
+	"github.com/morty-faas/cli/pkg/httpclient"
 
 	"github.com/oliveagle/jsonpath"
 	log "github.com/sirupsen/logrus"

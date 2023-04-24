@@ -3,8 +3,9 @@ package function
 import (
 	"encoding/json"
 	"errors"
-	"morty/cliconfig"
 	"os"
+
+	"github.com/morty-faas/cli/cliconfig"
 
 	morty "github.com/polyxia-org/morty-gateway/pkg/client"
 

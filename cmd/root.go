@@ -6,11 +6,12 @@ package cmd
 import (
 	"context"
 	"io"
-	"morty/cliconfig"
-	"morty/cmd/config"
-	"morty/cmd/function"
-	"morty/cmd/runtime"
 	"os"
+
+	"github.com/morty-faas/cli/cliconfig"
+	"github.com/morty-faas/cli/cmd/config"
+	"github.com/morty-faas/cli/cmd/function"
+	"github.com/morty-faas/cli/cmd/runtime"
 
 	morty "github.com/polyxia-org/morty-gateway/pkg/client"
 	log "github.com/sirupsen/logrus"

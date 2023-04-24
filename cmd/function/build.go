@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"morty/cliconfig"
-	"morty/client/registry"
-	"morty/function"
-	"morty/pkg/archive"
 	"os"
 	"time"
+
+	"github.com/morty-faas/cli/cliconfig"
+	"github.com/morty-faas/cli/client/registry"
+	"github.com/morty-faas/cli/function"
+	"github.com/morty-faas/cli/pkg/archive"
 
 	"github.com/briandowns/spinner"
 	morty "github.com/polyxia-org/morty-gateway/pkg/client"

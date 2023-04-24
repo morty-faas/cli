@@ -2,9 +2,10 @@ package httpclient
 
 import (
 	"context"
-	"morty/pkg/testutils"
 	"net/http"
 	"testing"
+
+	"github.com/morty-faas/cli/pkg/testutils"
 
 	"github.com/stretchr/testify/assert"
 )
