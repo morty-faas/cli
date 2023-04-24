@@ -19,7 +19,6 @@ jobs:
       run: echo "version=$(cat ./.go-version)" >> $GITHUB_OUTPUT
     - uses: wangyoucao577/go-release-action@v1
       with:
-        pre_command: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
         github_token: ${{ secrets.GITHUB_TOKEN }}
         extra_files: LICENSE README.md
         project_path: "."
