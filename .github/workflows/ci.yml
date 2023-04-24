@@ -24,9 +24,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-and-test:
     runs-on: ubuntu-22.04
-    env:
-      GOPRIVATE: github.com/polyxia-org/morty-gateway
-      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - id: go-version

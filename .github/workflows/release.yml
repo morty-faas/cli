@@ -6,9 +6,6 @@ jobs:
   release-binaries:
     name: Release binaries
     runs-on: ubuntu-22.04
-    env:
-      GOPRIVATE: github.com/polyxia-org/morty-gateway
-      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
     strategy:
       matrix:
         goos: [linux, darwin]

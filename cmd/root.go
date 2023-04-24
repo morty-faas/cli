@@ -13,7 +13,7 @@ import (
 	"github.com/morty-faas/cli/cmd/function"
 	"github.com/morty-faas/cli/cmd/runtime"
 
-	morty "github.com/polyxia-org/morty-gateway/pkg/client"
+	morty "github.com/morty-faas/controller/pkg/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
