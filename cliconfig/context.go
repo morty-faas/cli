@@ -16,6 +16,7 @@ import (
 type CtxKey struct{}
 type CurrentCtxKey struct{}
 type ControllerClientContextKey struct{}
+type RegistryClientContextKey struct{}
 
 const (
 	mortyConfigDefaultLocation = "$HOME/.morty/config.yaml"

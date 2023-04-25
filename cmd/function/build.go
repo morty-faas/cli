@@ -5,15 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/morty-faas/cli/cliconfig"
-	"github.com/morty-faas/cli/client/registry"
 	"github.com/morty-faas/cli/function"
 	"github.com/morty-faas/cli/pkg/archive"
 
 	"github.com/briandowns/spinner"
 	morty "github.com/morty-faas/controller/pkg/client"
+	registry "github.com/morty-faas/registry/pkg/client"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +37,7 @@ var buildCmd = &cobra.Command{
 
 		// Initialize clients
 		client := cmdContext.Value(cliconfig.ControllerClientContextKey{}).(*morty.APIClient)
-		reg := registry.NewClient(ctx.Registry)
+		registry := cmdContext.Value(cliconfig.RegistryClientContextKey{}).(*registry.APIClient)
 
 		path := "."
 		if len(args) > 0 {
@@ -55,19 +56,22 @@ var buildCmd = &cobra.Command{
 		}
 
 		s := makeSpinner(fmt.Sprintf("Building your function '%s'", f.Name))
-
-		// Ask the registry to build the function
-		buildFnRequest := &registry.BuildFnRequest{
-			Name:    f.Name,
-			Runtime: f.Runtime,
-			Archive: zipFile,
-		}
-
-		s.Start()
-		fnUri, err := reg.BuildFn(cmdContext, buildFnRequest)
+		archive, err := os.Open(zipFile)
 		if err != nil {
 			return err
 		}
+
+		// Ask the registry to build the function
+
+		s.Start()
+
+		fnUri, _, err := registry.FunctionsApi.V1FunctionsBuildPost(cmdContext).Name(f.Name).Runtime(f.Runtime).Archive(archive).Execute()
+		if err != nil {
+			return err
+		}
+
+		// Temporary awaiting the fix on the registry
+		fnUri = strings.Replace(fnUri, "\"", "", -1)
 
 		// Create the function to be able to invoke it
 		image := ctx.Registry + fnUri

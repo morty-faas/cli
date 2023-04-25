@@ -11,6 +11,7 @@ import (
 	"github.com/morty-faas/cli/cmd/runtime"
 
 	morty "github.com/morty-faas/controller/pkg/client"
+	registry "github.com/morty-faas/registry/pkg/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -73,6 +74,7 @@ var RootCmd = &cobra.Command{
 		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey{}, cfg)
 		ctx = context.WithValue(ctx, cliconfig.CurrentCtxKey{}, currentCtx)
 		ctx = context.WithValue(ctx, cliconfig.ControllerClientContextKey{}, makeMortyClient(currentCtx.Controller))
+		ctx = context.WithValue(ctx, cliconfig.RegistryClientContextKey{}, makeRegistryClient(currentCtx.Registry))
 
 		cmd.SetContext(ctx)
 	},
@@ -99,6 +101,14 @@ func makeMortyClient(baseURL string) *morty.APIClient {
 	return morty.NewAPIClient(&morty.Configuration{
 		Servers: morty.ServerConfigurations{
 			morty.ServerConfiguration{URL: baseURL},
+		},
+	})
+}
+
+func makeRegistryClient(baseURL string) *registry.APIClient {
+	return registry.NewAPIClient(&registry.Configuration{
+		Servers: registry.ServerConfigurations{
+			registry.ServerConfiguration{URL: baseURL},
 		},
 	})
 }
