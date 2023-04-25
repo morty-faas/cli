@@ -20,9 +20,9 @@ var currentContextCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("Name         : %s\n", ctx.Name)
-		fmt.Printf("Gateway URL  : %s\n", ctx.Gateway)
-		fmt.Printf("Registry URL : %s\n", ctx.Registry)
+		fmt.Printf("Name            : %s\n", ctx.Name)
+		fmt.Printf("Controller URL  : %s\n", ctx.Controller)
+		fmt.Printf("Registry URL    : %s\n", ctx.Registry)
 
 		return nil
 	},

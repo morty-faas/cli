@@ -19,17 +19,17 @@ var addContextCmd = &cobra.Command{
 		name := args[0]
 
 		registry, _ := cmd.Flags().GetString("registry")
-		gateway, _ := cmd.Flags().GetString("gateway")
+		controller, _ := cmd.Flags().GetString("controller")
 
 		cfg := cmd.Context().Value(cliconfig.CtxKey{}).(*cliconfig.Config)
 
 		ctx := &cliconfig.Context{
-			Name:     name,
-			Gateway:  gateway,
-			Registry: registry,
+			Name:       name,
+			Controller: controller,
+			Registry:   registry,
 		}
 
-		log.Debugf("Adding context '%s' (gateway: %s, registry: %s)", name, gateway, registry)
+		log.Debugf("Adding context '%s' (controller: %s, registry: %s)", name, controller, registry)
 
 		// We add the context to our configuration and we set it to the current context
 		// before saving the configuration on disk.
@@ -52,6 +52,6 @@ var addContextCmd = &cobra.Command{
 }
 
 func init() {
-	addContextCmd.PersistentFlags().String("gateway", "http://localhost:8080", "The URL of the Morty instance gateway.")
+	addContextCmd.PersistentFlags().String("controller", "http://localhost:8080", "The URL of the Morty instance controller.")
 	addContextCmd.PersistentFlags().String("registry", "http://localhost:8081", "The URL of the Morty instance registry.")
 }

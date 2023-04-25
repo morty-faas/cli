@@ -6,12 +6,12 @@ The Morty CLI is an interface allowing developers or users to easily interact wi
 
 First, you need to install the Morty CLI using one of the following methods:
 
-- Use the following command to install the latest version of the CLI : 
-`curl -fsSL https://morty-faas.github.io/install-cli.sh | sudo sh`
+- Use the following command to install the latest version of the CLI :
+  `curl -fsSL https://morty-faas.github.io/install-cli.sh | sudo sh`
 - Download a pre-compiled binary from the [releases](https://github.com/morty-faas/cli/releases) page
 - Build it from source, please see the [CONTRIBUTING.md](./CONTRIBUTING.md#compile-from-source)
 
-Once you have your Morty CLI installed locally (for the rest of the commands, we assume that `morty` is available in your `$PATH`), you can list the available runtimes and choose the more appropriate for your first function : 
+Once you have your Morty CLI installed locally (for the rest of the commands, we assume that `morty` is available in your `$PATH`), you can list the available runtimes and choose the more appropriate for your first function :
 
 ```bash
 morty runtime ls
@@ -25,7 +25,7 @@ Available runtimes:
 - rust-1.67
 ```
 
-Here we will use the `node-19` runtime to create our first function : 
+Here we will use the `node-19` runtime to create our first function :
 
 ```bash
 morty function init --runtime node-19 hello-morty
@@ -33,14 +33,14 @@ morty function init --runtime node-19 hello-morty
 morty fn init -r node-19 hello-morty
 ```
 
-You should now have a directory `hello-morty` in your current directory that contains a function code example. 
+You should now have a directory `hello-morty` in your current directory that contains a function code example.
 
-Once your function is ready, you will need to build it before invocating it. To do that, you need to have access to a Morty FaaS instance. Please refer to the [General Documentation(TODO)](#) to learn how to run a local Morty FaaS instance. For the sake of simplicity here, we will assume that we have a Morty Gateway running on `https://faas.morty.io` and a Morty Registry running on `https://registry.morty.io`, but you can use your own values.
+Once your function is ready, you will need to build it before invocating it. To do that, you need to have access to a Morty FaaS instance. Please refer to the [General Documentation(TODO)](#) to learn how to run a local Morty FaaS instance. For the sake of simplicity here, we will assume that we have a Morty Controller running on `https://faas.morty.io` and a Morty Registry running on `https://registry.morty.io`, but you can use your own values.
 
-You need first to configure your context: 
+You need first to configure your context:
 
 ```bash
-morty config add-context morty-faas --gateway https://faas.morty.io --registry https://registry.morty.io
+morty config add-context morty-faas --controller https://faas.morty.io --registry https://registry.morty.io
 # Output
 Success ! Your context 'morty-faas' has been saved and it is now the active context.
 ```
@@ -51,11 +51,12 @@ You can now build your function (it can take some time to complete) :
 
 ```bash
 morty fn build hello-morty
-# Once done, you should see something like : 
+# Once done, you should see something like :
 Function hello-morty has been created !
 ```
 
-Finally, you can invoke your function using the following command : 
+Finally, you can invoke your function using the following command :
+
 ```bash
 morty fn invoke hello-morty
 ```
@@ -70,17 +71,17 @@ Morty CLI has the ability to work with multiple contexts. By default, Morty will
 
 ```
 Name         : localhost
-Gateway URL  : http://localhost:8080
+Controller URL  : http://localhost:8080
 Registry URL : http://localhost:8081
 ```
 
 To add your own context, use the following command :
 
 ```bash
-morty config add-context $CONTEXT_NAME --gateway=$GATEWAY --registry=$REGISTRY
+morty config add-context $CONTEXT_NAME --controller=$CONTROLLER --registry=$REGISTRY
 ```
 
-Replace `$CONTEXT_NAME`, `$GATEWAY`, `$REGISTRY` with your own values.
+Replace `$CONTEXT_NAME`, `$CONTROLLER`, `$REGISTRY` with your own values.
 
 To see all the contexts available in your configuration, use the following command:
 
@@ -119,14 +120,14 @@ morty config current-context
 
 # Output without MORTY_LOG set
 Name         : thomas-dev
-Gateway URL  : http://162.38.112.57:8080
+Controller URL  : http://162.38.112.57:8080
 Registry URL : http://162.38.112.57:8081
 
 # Output with MORTY_LOG
 INFO[0000] Loading configuration from path: /Users/thomas/.morty/config.yaml
 INFO[0000] Active context : thomas-dev
 Name         : thomas-dev
-Gateway URL  : http://162.38.112.57:8080
+Controller URL  : http://162.38.112.57:8080
 Registry URL : http://162.38.112.57:8081
 ```
 
@@ -157,13 +158,14 @@ morty function build $FUNCTION_DIRECTORY
 ## Invoke a function
 
 Once your function has been built, you can invoke it through the CLI. We assume here that you have a function `hello-world` already built in the system that produces a JSON output :
+
 ```json
 {
-    "output": "Hello from my Hello World function"
+  "output": "Hello from my Hello World function"
 }
 ```
 
-To invoke your function, simply run : 
+To invoke your function, simply run :
 
 ```bash
 morty fn invoke hello-world
@@ -174,7 +176,7 @@ morty fn invoke hello-world
 }
 ```
 
-You can call your function with parameters by using the `--param` flag : 
+You can call your function with parameters by using the `--param` flag :
 
 ```bash
 morty fn invoke --param name=Morty hello-world
@@ -189,21 +191,20 @@ By default, the command will send an HTTP `GET` request on the function endpoint
 
 If you want to invoke your function with a different method, with a body or custom headers, you can use the flags of the `invoke` command :
 
-For example, to send a `POST` request with data for your function : 
+For example, to send a `POST` request with data for your function :
 
 ```
 morty fn invoke -X POST -d '{"foo":"bar"}' hello-world
 ```
 
-To add custom headers to the request, for example to precise the `Content-Type` header, use the following command : 
+To add custom headers to the request, for example to precise the `Content-Type` header, use the following command :
 
 ```
 morty fn invoke -X POST -d '{"foo":"bar"}' -H "Content-Type: application/json" hello-world
 ```
 
-For other methods or flags, use the command help : 
+For other methods or flags, use the command help :
 
 ```
 morty fn invoke --help
 ```
-

@@ -35,7 +35,7 @@ var buildCmd = &cobra.Command{
 		ctx := cmdContext.Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
 
 		// Initialize clients
-		client := cmdContext.Value(cliconfig.GatewayClientContextKey{}).(*morty.APIClient)
+		client := cmdContext.Value(cliconfig.ControllerClientContextKey{}).(*morty.APIClient)
 		reg := registry.NewClient(ctx.Registry)
 
 		path := "."

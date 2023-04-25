@@ -72,7 +72,7 @@ var RootCmd = &cobra.Command{
 
 		ctx := context.WithValue(cmd.Context(), cliconfig.CtxKey{}, cfg)
 		ctx = context.WithValue(ctx, cliconfig.CurrentCtxKey{}, currentCtx)
-		ctx = context.WithValue(ctx, cliconfig.GatewayClientContextKey{}, makeMortyClient(currentCtx.Gateway))
+		ctx = context.WithValue(ctx, cliconfig.ControllerClientContextKey{}, makeMortyClient(currentCtx.Controller))
 
 		cmd.SetContext(ctx)
 	},
