@@ -6,6 +6,8 @@ The Morty CLI is an interface allowing developers or users to easily interact wi
 
 First, you need to install the Morty CLI using one of the following methods:
 
+- Use the following command to install the latest version of the CLI : 
+`curl -fsSL https://morty-faas.github.io/install-cli.sh | sudo sh`
 - Download a pre-compiled binary from the [releases](https://github.com/morty-faas/cli/releases) page
 - Build it from source, please see the [CONTRIBUTING.md](./CONTRIBUTING.md#compile-from-source)
 
