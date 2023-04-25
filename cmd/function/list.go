@@ -20,7 +20,7 @@ var listCmd = &cobra.Command{
 	Long:    "List functions",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmdContext := cmd.Context()
-		client := cmdContext.Value(cliconfig.GatewayClientContextKey{}).(*morty.APIClient)
+		client := cmdContext.Value(cliconfig.ControllerClientContextKey{}).(*morty.APIClient)
 
 		functions, res, err := client.FunctionApi.GetFunctions(cmdContext).Execute()
 		if err != nil {

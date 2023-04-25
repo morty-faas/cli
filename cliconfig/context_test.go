@@ -30,9 +30,9 @@ func Test_Load_ReturnUserProvidedConfigFromDefaultLocation(t *testing.T) {
 		location: location,
 		Contexts: []Context{
 			{
-				Name:     "test",
-				Gateway:  "http://gateway.morty.test",
-				Registry: "http://registry.morty.test",
+				Name:       "test",
+				Controller: "http://controller.morty.test",
+				Registry:   "http://registry.morty.test",
 			},
 		},
 	}
@@ -56,9 +56,9 @@ func Test_hasContext(t *testing.T) {
 func Test_UseContext(t *testing.T) {
 	config := defaultConfig()
 	config.Contexts = append(config.Contexts, Context{
-		Name:     "test",
-		Gateway:  "test",
-		Registry: "test",
+		Name:       "test",
+		Controller: "test",
+		Registry:   "test",
 	})
 
 	assert.True(t, config.hasContext("localhost"))
@@ -70,9 +70,9 @@ func Test_UseContext(t *testing.T) {
 
 func Test_GetContext(t *testing.T) {
 	expected := Context{
-		Name:     "test",
-		Gateway:  "test",
-		Registry: "test",
+		Name:       "test",
+		Controller: "test",
+		Registry:   "test",
 	}
 
 	config := defaultConfig()
@@ -86,9 +86,9 @@ func Test_GetContext(t *testing.T) {
 
 func Test_GetCurrentContext(t *testing.T) {
 	expected := Context{
-		Name:     "test",
-		Gateway:  "test",
-		Registry: "test",
+		Name:       "test",
+		Controller: "test",
+		Registry:   "test",
 	}
 
 	config := defaultConfig()
@@ -103,9 +103,9 @@ func Test_GetCurrentContext(t *testing.T) {
 
 func Test_AddContext(t *testing.T) {
 	expected := Context{
-		Name:     "test",
-		Gateway:  "test",
-		Registry: "test",
+		Name:       "test",
+		Controller: "test",
+		Registry:   "test",
 	}
 
 	config := defaultConfig()

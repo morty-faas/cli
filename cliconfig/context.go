@@ -15,7 +15,7 @@ import (
 
 type CtxKey struct{}
 type CurrentCtxKey struct{}
-type GatewayClientContextKey struct{}
+type ControllerClientContextKey struct{}
 
 const (
 	mortyConfigDefaultLocation = "$HOME/.morty/config.yaml"
@@ -41,8 +41,8 @@ type (
 	Context struct {
 		// The name of the current context
 		Name string `yaml:"name"`
-		// The address of the gateway
-		Gateway string `yaml:"gateway"`
+		// The address of the controller
+		Controller string `yaml:"controller"`
 		// The address of the registry
 		Registry string `yaml:"registry"`
 	}
@@ -79,7 +79,7 @@ func (c *Config) AddContext(context *Context) error {
 		return ErrContextAlreadyExistsWithName
 	}
 
-	context.Gateway = sanitizeUrl(context.Gateway)
+	context.Controller = sanitizeUrl(context.Controller)
 	context.Registry = sanitizeUrl(context.Registry)
 
 	c.Contexts = append(c.Contexts, *context)
@@ -103,9 +103,9 @@ func defaultConfig() *Config {
 		Current:  "localhost",
 		Contexts: []Context{
 			{
-				Name:     "localhost",
-				Gateway:  "http://localhost:8080",
-				Registry: "http://localhost:8081",
+				Name:       "localhost",
+				Controller: "http://localhost:8080",
+				Registry:   "http://localhost:8081",
 			},
 		},
 	}

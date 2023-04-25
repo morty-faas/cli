@@ -118,7 +118,7 @@ func validateHttpMethod(method string) error {
 func invoke(ctx context.Context, opts *invokeOptions) (string, error) {
 	// Create an HTTP client that can interact with our Morty backend
 	currentCtx := ctx.Value(cliconfig.CurrentCtxKey{}).(*cliconfig.Context)
-	cl := httpclient.NewClient(currentCtx.Gateway)
+	cl := httpclient.NewClient(currentCtx.Controller)
 
 	log.Debugf("New invocation request with options: %v", debug.JSON(opts))
 
