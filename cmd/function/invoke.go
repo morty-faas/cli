@@ -162,10 +162,6 @@ func invoke(ctx context.Context, opts *invokeOptions) (string, error) {
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode >= 400 {
-		return "", err
-	}
-
 	b, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", err
