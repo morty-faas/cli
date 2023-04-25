@@ -3,8 +3,8 @@ module github.com/morty-faas/cli
 go 1.19
 
 retract (
-	v1.0.0
 	v1.0.1
+	v1.0.0
 )
 
 require (
@@ -14,7 +14,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/sirupsen/logrus v1.9.0
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
 	gopkg.in/yaml.v3 v3.0.1
@@ -42,7 +42,7 @@ require (
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.15.11 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
