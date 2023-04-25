@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	runtimeTemplateEndpoint = "https://api.github.com/repos/polyxia-org/morty-runtimes/git/trees/main?recursive=1"
+	runtimeTemplateEndpoint = "https://api.github.com/repos/morty-faas/runtimes/git/trees/main?recursive=1"
 )
 
 type (
 	RuntimesResponse struct {
-		Sha string `json:"sha"`
-		URL string `json:"url"`
+		Sha  string `json:"sha"`
+		URL  string `json:"url"`
 		Tree []struct {
 			Path string `json:"path"`
 			Mode string `json:"mode"`
@@ -32,20 +32,20 @@ func List() ([]string, error) {
 	log.Debugf("GET request on '%s'", runtimeTemplateEndpoint)
 	response, err := http.Get(runtimeTemplateEndpoint)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	var runtimes RuntimesResponse
 	err = json.NewDecoder(response.Body).Decode(&runtimes)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	var runtimesList []string
 
 	for _, tree := range runtimes.Tree {
-		if tree.Type == "tree" && strings.HasPrefix(tree.Path, "template/")  && strings.HasSuffix(tree.Path, "/function") {
+		if tree.Type == "tree" && strings.HasPrefix(tree.Path, "template/") && strings.HasSuffix(tree.Path, "/function") {
 			runtimesList = append(runtimesList, strings.Split(tree.Path, "/")[1])
 		}
 	}

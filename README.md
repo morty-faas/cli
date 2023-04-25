@@ -6,7 +6,7 @@ The Morty CLI is an interface allowing developers or users to easily interact wi
 
 First, you need to install the Morty CLI using one of the following methods:
 
-- Download a pre-compiled binary from the [releases](https://github.com/polyxia-org/morty-cli/releases) page
+- Download a pre-compiled binary from the [releases](https://github.com/morty-faas/cli/releases) page
 - Build it from source, please see the [CONTRIBUTING.md](./CONTRIBUTING.md#compile-from-source)
 
 Once you have your Morty CLI installed locally (for the rest of the commands, we assume that `morty` is available in your `$PATH`), you can list the available runtimes and choose the more appropriate for your first function : 

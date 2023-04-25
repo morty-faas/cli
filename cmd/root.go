@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 polyxia-org
-*/
 package cmd
 
 import (

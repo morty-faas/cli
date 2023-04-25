@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	templateEndpoint   = "github.com/polyxia-org/morty-runtimes.git//template"
+	templateEndpoint   = "github.com/morty-faas/runtimes.git//template"
 	mortyWorkspaceFile = "morty.yaml"
 )
 
