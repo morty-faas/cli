@@ -2,6 +2,11 @@ module github.com/morty-faas/cli
 
 go 1.19
 
+retract (
+	v1.0.0
+	v1.0.1
+)
+
 require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/hashicorp/go-getter v1.7.1
