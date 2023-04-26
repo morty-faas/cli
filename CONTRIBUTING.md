@@ -2,7 +2,7 @@
 
 ## Compile from source
 
-You only need to install [Go](https://go.dev/doc/install) 1.19+ to compile the project locally. Also, you need to have access to the [morty-faas/controller](https://github.com/morty-faas/controller) repository with your account.
+You only need to install [Go](https://go.dev/doc/install) 1.19+ to compile the project locally.
 
 Now, you can run the following command to compile the project :
 

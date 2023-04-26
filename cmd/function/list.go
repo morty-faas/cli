@@ -7,7 +7,7 @@ import (
 
 	"github.com/morty-faas/cli/cliconfig"
 
-	morty "github.com/morty-faas/controller/pkg/client"
+	morty "github.com/morty-faas/morty/pkg/client/controller"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"

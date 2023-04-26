@@ -10,8 +10,8 @@ import (
 	"github.com/morty-faas/cli/cmd/function"
 	"github.com/morty-faas/cli/cmd/runtime"
 
-	morty "github.com/morty-faas/controller/pkg/client"
-	registry "github.com/morty-faas/registry/pkg/client"
+	morty "github.com/morty-faas/morty/pkg/client/controller"
+	registry "github.com/morty-faas/morty/pkg/client/registry"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
