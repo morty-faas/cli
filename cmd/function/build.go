@@ -13,8 +13,8 @@ import (
 	"github.com/morty-faas/cli/pkg/archive"
 
 	"github.com/briandowns/spinner"
-	morty "github.com/morty-faas/controller/pkg/client"
-	registry "github.com/morty-faas/registry/pkg/client"
+	morty "github.com/morty-faas/morty/pkg/client/controller"
+	registry "github.com/morty-faas/morty/pkg/client/registry"
 	"github.com/spf13/cobra"
 )
 

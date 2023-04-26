@@ -10,8 +10,7 @@ retract (
 require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/hashicorp/go-getter v1.7.1
-	github.com/morty-faas/controller v1.0.0
-	github.com/morty-faas/registry v1.1.0
+	github.com/morty-faas/morty v1.0.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/sirupsen/logrus v1.9.0
@@ -73,6 +72,7 @@ require (
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
 	google.golang.org/grpc v1.53.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
