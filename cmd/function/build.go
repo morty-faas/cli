@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/morty-faas/cli/cliconfig"
@@ -55,29 +54,25 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
-		s := makeSpinner(fmt.Sprintf("Building your function '%s'", f.Name))
+		s := makeSpinner(fmt.Sprintf("Building version '%s' of your function '%s'", f.Version, f.Name))
 		archive, err := os.Open(zipFile)
 		if err != nil {
 			return err
 		}
 
-		// Ask the registry to build the function
-
 		s.Start()
 
-		fnUri, _, err := registry.FunctionsApi.V1FunctionsBuildPost(cmdContext).Name(f.Name).Runtime(f.Runtime).Archive(archive).Execute()
+		fnUri, _, err := registry.FunctionsApi.V1FunctionsBuildPost(cmdContext).Name(f.Name).Runtime(f.Runtime).Version(f.Version).Archive(archive).Execute()
 		if err != nil {
 			return err
 		}
 
-		// Temporary awaiting the fix on the registry
-		fnUri = strings.Replace(fnUri, "\"", "", -1)
-
 		// Create the function to be able to invoke it
 		image := ctx.Registry + fnUri
 		createFnRequest := morty.CreateFunctionRequest{
-			Name:  &f.Name,
-			Image: &image,
+			Version: f.Version,
+			Name:    f.Name,
+			Image:   image,
 		}
 
 		if _, res, err := client.FunctionApi.CreateFunction(cmdContext).CreateFunctionRequest(createFnRequest).Execute(); err != nil {

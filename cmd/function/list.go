@@ -36,9 +36,11 @@ var listCmd = &cobra.Command{
 		}
 
 		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"ID", "NAME", "IMAGE"})
+		table.SetHeader([]string{"NAME", "VERSION"})
 		for _, fn := range functions {
-			table.Append([]string{fn.GetId(), fn.GetName(), fn.GetImage()})
+			for _, v := range fn.GetVersions() {
+				table.Append([]string{fn.GetName(), v})
+			}
 		}
 
 		table.SetAutoWrapText(false)

@@ -17,6 +17,7 @@ import (
 const (
 	templateEndpoint   = "github.com/morty-faas/runtimes.git//template"
 	mortyWorkspaceFile = "morty.yaml"
+	defaultVersion     = "v0.1.0"
 )
 
 type (
@@ -28,6 +29,7 @@ type (
 	function struct {
 		Path    string `yaml:"-"`
 		Name    string `yaml:"name"`
+		Version string `yaml:"version"`
 		Runtime string `yaml:"runtime"`
 	}
 )
@@ -112,6 +114,7 @@ func injectWorkspaceFile(opts *Options) error {
 	f := &function{
 		Name:    opts.Name,
 		Runtime: opts.Runtime,
+		Version: defaultVersion,
 	}
 
 	by, err := yaml.Marshal(f)
