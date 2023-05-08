@@ -19,15 +19,16 @@ import (
 )
 
 type invokeOptions struct {
-	FnName  string   `json:"functionName"`
-	Method  string   `json:"method"`
-	Body    string   `json:"body"`
-	Headers []string `json:"headers"`
-	Params  []string `json:"params"`
+	FnName    string   `json:"functionName"`
+	FnVersion string   `json:"functionVersion"`
+	Method    string   `json:"method"`
+	Body      string   `json:"body"`
+	Headers   []string `json:"headers"`
+	Params    []string `json:"params"`
 }
 
 const (
-	invokeFunctionEndpoint = "functions/{name}/invoke"
+	invokeFunctionEndpoint = "functions/{name}/{version}/invoke"
 )
 
 var invokeCmd = &cobra.Command{
@@ -40,6 +41,7 @@ var invokeCmd = &cobra.Command{
 
 		// Safe call, validation is performed by cobra.ExactArgs(1) above
 		name := args[0]
+		version, _ := cmd.Flags().GetString("version")
 
 		// Extract the method from the command
 		method, _ := cmd.Flags().GetString("method")
@@ -54,11 +56,12 @@ var invokeCmd = &cobra.Command{
 		params, _ := cmd.Flags().GetStringArray("param")
 
 		opts := &invokeOptions{
-			FnName:  name,
-			Method:  method,
-			Body:    data,
-			Headers: headers,
-			Params:  params,
+			FnName:    name,
+			FnVersion: version,
+			Method:    method,
+			Body:      data,
+			Headers:   headers,
+			Params:    params,
 		}
 
 		response, err := invoke(cmdCtx, opts)
@@ -98,6 +101,7 @@ var invokeCmd = &cobra.Command{
 }
 
 func init() {
+	invokeCmd.PersistentFlags().String("version", "latest", "The version of the function to invoke.")
 	invokeCmd.PersistentFlags().StringP("method", "X", "GET", "The HTTP method to use to invoke the request. Valid values are: GET, POST, PUT, PATCH, DELETE")
 	invokeCmd.PersistentFlags().StringP("data", "d", "", "The body to pass to the invocation request.")
 	invokeCmd.PersistentFlags().StringP("query", "q", "$", "A valid JSON Path expression to execute on the function response. If the function output isn't a JSON, the flag will have no effect.")
@@ -141,6 +145,7 @@ func invoke(ctx context.Context, opts *invokeOptions) (string, error) {
 	}
 
 	uri := strings.Replace(invokeFunctionEndpoint, "{name}", opts.FnName, -1)
+	uri = strings.Replace(uri, "{version}", opts.FnVersion, -1)
 
 	// If the caller has passed params, add them to url
 	if len(opts.Params) > 0 {
