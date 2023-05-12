@@ -26,6 +26,7 @@ const (
 var (
 	ErrContextNotFound              = errors.New("context not found")
 	ErrContextAlreadyExistsWithName = errors.New("context already exists with the same name")
+	ErrRemoveDefaultContext         = errors.New("cannot delete the default context")
 )
 
 type (
@@ -85,6 +86,20 @@ func (c *Config) AddContext(context *Context) error {
 
 	c.Contexts = append(c.Contexts, *context)
 	return nil
+}
+
+// RemoveContext remove a context from the list of known contexts
+func (c *Config) RemoveContext(name string) error {
+	if name == "localhost" {
+		return ErrRemoveDefaultContext
+	}
+	for i, ctx := range c.Contexts {
+		if ctx.Name == name {
+			c.Contexts = append(c.Contexts[:i], c.Contexts[i+1:]...)
+			return nil
+		}
+	}
+	return ErrContextNotFound
 }
 
 // hasContext return true if the given context exists, false otherwise
