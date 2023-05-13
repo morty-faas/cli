@@ -28,6 +28,18 @@ type invokeOptions struct {
 }
 
 const (
+	// Function-Response-Time
+	// ref: https://github.com/morty-faas/morty/issues/25
+	HttpHeaderFunctionResponseTime string = "Function-Response-Time"
+	// Orchestrate-Response-Time
+	// ref: https://github.com/morty-faas/morty/issues/25
+	HttpHeaderOrchestrateResponseTime string = "Orchestrate-Response-Time"
+	// Morty-Response-Time
+	// ref: https://github.com/morty-faas/morty/issues/25
+	HttpHeaderMortyResponseTime string = "Morty-Response-Time"
+)
+
+const (
 	invokeFunctionEndpoint = "functions/{name}/{version}/invoke"
 )
 
@@ -166,6 +178,10 @@ func invoke(ctx context.Context, opts *invokeOptions) (string, error) {
 		return "", err
 	}
 	defer res.Body.Close()
+
+	log.Trace(fmt.Sprintf("Header %s: %s", HttpHeaderFunctionResponseTime, res.Header.Get(HttpHeaderFunctionResponseTime)))
+	log.Trace(fmt.Sprintf("Header %s: %s", HttpHeaderOrchestrateResponseTime, res.Header.Get(HttpHeaderOrchestrateResponseTime)))
+	log.Trace(fmt.Sprintf("Header %s: %s", HttpHeaderMortyResponseTime, res.Header.Get(HttpHeaderMortyResponseTime)))
 
 	b, err := io.ReadAll(res.Body)
 	if err != nil {
