@@ -90,6 +90,7 @@ func Execute() {
 }
 
 func init() {
+	RootCmd.AddCommand(versionCmd)
 	RootCmd.AddCommand(config.RootCmd)
 	RootCmd.AddCommand(function.RootCmd)
 	RootCmd.AddCommand(runtime.RootCmd)

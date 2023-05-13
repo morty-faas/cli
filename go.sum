@@ -396,6 +396,8 @@ github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyua
 github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/morty-faas/morty v1.1.0-RC1 h1:Viy5y8Ghnwuf/3P0wHHjIIahNopDDQUqFFYljojoTBI=
 github.com/morty-faas/morty v1.1.0-RC1/go.mod h1:HRJ867IsYSF0dROI5eAmQjHkSI7+Trs6VSXHSV0EMtw=
+github.com/morty-faas/morty v1.1.0-RC1.0.20230513211117-5beade79921b h1:WxBl1O/VurXy3AMeZrkdLtJAtbDyvrThO02GGVRtLg0=
+github.com/morty-faas/morty v1.1.0-RC1.0.20230513211117-5beade79921b/go.mod h1:knCFikLpKsyLm9qjXseYV3ZtHQtfXuTNSOm7thTeejk=
 github.com/olekukonko/tablewriter v0.0.5 h1:P2Ga83D34wi1o9J6Wh1mRuqd4mF/x/lgBS7N7AbDhec=
 github.com/olekukonko/tablewriter v0.0.5/go.mod h1:hPp6KlRPjbx+hW8ykQs1w3UBbZlj6HuIJcUGPhkA7kY=
 github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852 h1:Yl0tPBa8QPjGmesFh1D0rDy+q1Twx6FyU7VWHi8wZbI=
