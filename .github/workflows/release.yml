@@ -27,3 +27,4 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         goversion: ${{ steps.go-version.outputs.version }}
+        build_command: make build
