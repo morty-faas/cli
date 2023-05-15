@@ -10,7 +10,7 @@ retract (
 require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/hashicorp/go-getter v1.7.1
-	github.com/morty-faas/morty v1.1.0-RC1.0.20230513211117-5beade79921b
+	github.com/morty-faas/morty v1.1.0-RC2
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/sirupsen/logrus v1.9.0
